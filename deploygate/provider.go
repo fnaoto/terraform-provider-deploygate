@@ -1,4 +1,4 @@
-package hashicups
+package deploygate
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -11,6 +11,7 @@ func Provider() *schema.Provider {
 			"api_token": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
+				Sensitive:   true,
 				DefaultFunc: schema.EnvDefaultFunc("DG_API_TOKEN", nil),
 			},
 			"user_name": &schema.Schema{
