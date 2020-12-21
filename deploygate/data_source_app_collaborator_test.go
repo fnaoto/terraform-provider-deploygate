@@ -52,8 +52,20 @@ func testDataSourceAppCollaborator(n string) resource.TestCheckFunc {
 
 const testDataSourceAppCollaboratorConfig = `
 data "deploygate_app_collaborator" "current" {
-	owner    = "dummy"
-	platform = "dummy"
-	app_id   = "dummy"
+	owner    = var.owner
+	platform = var.platform
+	app_id   = var.app_id
+}
+
+variable "platform" {
+  type = string
+}
+
+variable "app_id" {
+  type = string
+}
+
+variable "owner" {
+  type = string
 }
 `

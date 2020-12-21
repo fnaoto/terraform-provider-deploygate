@@ -82,12 +82,8 @@ type AppCollaboratorConfig struct {
 }
 
 func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error {
-	acc := &AppCollaboratorConfig{
-		owner:    d.Get("owner").(string),
-		platform: d.Get("platform").(string),
-		appID:    d.Get("app_id").(string),
-		users:    d.Get("users").(string),
-	}
+
+	acc := setAppCollaboratorConfig(d)
 
 	log.Printf("[DEBUG] resourceAppCollaboratorRead: %s", acc)
 
@@ -105,12 +101,7 @@ func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceAppCollaboratorCreate(d *schema.ResourceData, meta interface{}) error {
-	acc := &AppCollaboratorConfig{
-		owner:    d.Get("owner").(string),
-		platform: d.Get("platform").(string),
-		appID:    d.Get("app_id").(string),
-		users:    d.Get("users").(string),
-	}
+	acc := setAppCollaboratorConfig(d)
 
 	log.Printf("[DEBUG] resourceAppCollaboratorCreate: %s", acc)
 
@@ -127,12 +118,7 @@ func resourceAppCollaboratorCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceAppCollaboratorUpdate(d *schema.ResourceData, meta interface{}) error {
-	acc := &AppCollaboratorConfig{
-		owner:    d.Get("owner").(string),
-		platform: d.Get("platform").(string),
-		appID:    d.Get("app_id").(string),
-		users:    d.Get("users").(string),
-	}
+	acc := setAppCollaboratorConfig(d)
 
 	log.Printf("[DEBUG] resourceAppCollaboratorUpdate: %s", acc)
 
@@ -146,12 +132,7 @@ func resourceAppCollaboratorUpdate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceAppCollaboratorDelete(d *schema.ResourceData, meta interface{}) error {
-	acc := &AppCollaboratorConfig{
-		owner:    d.Get("owner").(string),
-		platform: d.Get("platform").(string),
-		appID:    d.Get("app_id").(string),
-		users:    d.Get("users").(string),
-	}
+	acc := setAppCollaboratorConfig(d)
 
 	log.Printf("[DEBUG] resourceAppCollaboratorDelete: %s", acc)
 
@@ -185,6 +166,7 @@ func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygat
 		Platform: cfg.platform,
 		AppId:    cfg.appID,
 		Users:    cfg.users,
+		Role:     1,
 	}
 
 	collaborator, err := clt.client.AddAppCollaborator(g)
@@ -210,4 +192,24 @@ func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploy
 	}
 
 	return collaborator, nil
+}
+
+func setAppCollaboratorConfig(d *schema.ResourceData) *AppCollaboratorConfig {
+	var usersList string
+
+	if v, ok := d.GetOk("users"); ok {
+		for _, element := range v.(*schema.Set).List() {
+			elem := element.(map[string]interface{})
+			usersList += elem["name"].(string) + ","
+		}
+	}
+
+	acc := &AppCollaboratorConfig{
+		owner:    d.Get("owner").(string),
+		platform: d.Get("platform").(string),
+		appID:    d.Get("app_id").(string),
+		users:    usersList,
+	}
+
+	return acc
 }
