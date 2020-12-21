@@ -20,14 +20,14 @@ var testDGProviderConfigure sync.Once
 
 var testDGProviders map[string]*schema.Provider
 
-func testDGPreCheck(t *testing.T) {
+func Test_DGPreCheck(t *testing.T) {
 	testDGProviderConfigure.Do(func() {
-		if os.Getenv("DG_API_TOKEN") == "" || os.Getenv("DG_USER_NAME") == "" {
-			t.Fatal("DG_API_TOKEN and DG_USER_NAME must be set for acceptance tests")
+		if os.Getenv("DG_API_KEY") == "" {
+			t.Fatal("DG_API_KEY must be set for acceptance tests")
 		}
 
-		if os.Getenv("DG_API_TOKEN") == "" || os.Getenv("DG_ORGANIZATION_NAME") == "" {
-			t.Fatal("DG_API_TOKEN and DG_ORGANIZATION_NAME must be set for acceptance tests")
+		if os.Getenv("DG_USER_NAME") == "" && os.Getenv("DG_ORGANIZATION_NAME") == "" {
+			t.Fatal("DG_USER_NAME or DG_ORGANIZATION_NAME must be set for acceptance tests")
 		}
 
 		err := testDGProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))

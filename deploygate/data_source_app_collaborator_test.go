@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAppCollaborator_basic(t *testing.T) {
+func Test_AppCollaborator_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { testDGPreCheck(t) },
+		PreCheck:  func() { Test_DGPreCheck(t) },
 		Providers: testDGProviders,
 		Steps: []resource.TestStep{
 			{

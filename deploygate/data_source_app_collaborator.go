@@ -29,7 +29,7 @@ func dataSourceAppCollaborator() *schema.Resource {
 }
 
 func dataSourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error {
-	client := go_deploygate.DefaultClient()
+	client := meta.(*Client).client
 
 	owner := d.Get("owner").(string)
 	platform := d.Get("platform").(string)
