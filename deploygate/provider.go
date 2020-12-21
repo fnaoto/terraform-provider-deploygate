@@ -30,6 +30,9 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"deploygate_app_collaborator": dataSourceAppCollaborator(),
 		},
+		ResourcesMap: map[string]*schema.Resource{
+			"deploygate_app_collaborator": resourceAppCollaborator(),
+		},
 	}
 
 	p.ConfigureFunc = providerConfigure(p)

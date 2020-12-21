@@ -27,7 +27,7 @@ func dataSourceAppCollaborator() *schema.Resource {
 			},
 			"users": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -43,7 +43,7 @@ func dataSourceAppCollaborator() *schema.Resource {
 			},
 			"teams": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -59,7 +59,7 @@ func dataSourceAppCollaborator() *schema.Resource {
 			},
 			"usage": {
 				Type:     schema.TypeMap,
-				Optional: true,
+				Computed: true,
 				Elem:     schema.TypeInt,
 			},
 		},
