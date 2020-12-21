@@ -14,3 +14,14 @@ terraform-provider-deploygate
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# dotenv
+.env
+
+# log
+crash.log
+
+# terraform
+.terraform
+*.tfstate
+*.tfstate.*
