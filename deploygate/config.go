@@ -16,6 +16,9 @@ type Client struct {
 
 // Client : API Client for deploygate
 func (c *Config) Client() (interface{}, error) {
+	var clnt Client
+
 	client, err := go_deploygate.NewClient(c.apiKey)
-	return client, err
+	clnt.client = client
+	return &clnt, err
 }
