@@ -9,3 +9,7 @@ variable "app_id" {
 variable "owner" {
   type = string
 }
+
+variable "add_user_name" {
+  type = string
+}
