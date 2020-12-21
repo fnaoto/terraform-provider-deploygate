@@ -8,22 +8,22 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func Test_DataSourceAppCollaborator_basic(t *testing.T) {
+func Test_ResourceAppCollaborator_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { Test_DGPreCheck(t) },
 		Providers: testDGProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testDataSourceAppCollaboratorConfig,
+				Config: resourceTestAppCollaboratorConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testDataSourceAppCollaborator("data.deploygate_app_collaborator.current"),
+					resourceTestAppCollaborator("resource.deploygate_app_collaborator.current"),
 				),
 			},
 		},
 	})
 }
 
-func testDataSourceAppCollaborator(n string) resource.TestCheckFunc {
+func resourceTestAppCollaborator(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -46,15 +46,22 @@ func testDataSourceAppCollaborator(n string) resource.TestCheckFunc {
 			return fmt.Errorf("app_id expected to not be nil")
 		}
 
+		if rs.Primary.Attributes["users"] == "" {
+			return fmt.Errorf("users expected to not be nil")
+		}
+
 		return nil
 	}
 }
 
-const testDataSourceAppCollaboratorConfig = `
-data "deploygate_app_collaborator" "current" {
+const resourceTestAppCollaboratorConfig = `
+resource "deploygate_app_collaborator" "current" {
 	owner    = var.owner
 	platform = var.platform
 	app_id   = var.app_id
+	users {
+		name = var.add_user_name
+	}
 }
 
 variable "platform" {
@@ -66,6 +73,10 @@ variable "app_id" {
 }
 
 variable "owner" {
+  type = string
+}
+
+variable "add_user_name" {
   type = string
 }
 `
