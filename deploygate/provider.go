@@ -27,6 +27,9 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("DG_ORGANIZATION_NAME", nil),
 			},
 		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"deploygate_app_collaborator": dataSourceAppCollaborator(),
+		},
 	}
 
 	p.ConfigureFunc = providerConfigure(p)
