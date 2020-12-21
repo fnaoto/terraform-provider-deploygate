@@ -122,7 +122,12 @@ func resourceAppCollaboratorUpdate(d *schema.ResourceData, meta interface{}) err
 
 	log.Printf("[DEBUG] resourceAppCollaboratorUpdate: %s", acc)
 
-	meta.(*Client).deleteAppCollaborator(acc)
+	_, err := meta.(*Client).deleteAppCollaborator(acc)
+
+	if err != nil {
+		return err
+	}
+
 	rs, _ := meta.(*Client).addAppCollaborator(acc)
 
 	d.SetId(fmt.Sprintf("%s/%s/%s", acc.owner, acc.platform, acc.appID))
@@ -136,7 +141,11 @@ func resourceAppCollaboratorDelete(d *schema.ResourceData, meta interface{}) err
 
 	log.Printf("[DEBUG] resourceAppCollaboratorDelete: %s", acc)
 
-	meta.(*Client).deleteAppCollaborator(acc)
+	_, err := meta.(*Client).deleteAppCollaborator(acc)
+
+	if err != nil {
+		return err
+	}
 
 	d.SetId("")
 
@@ -183,6 +192,7 @@ func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploy
 		Owner:    cfg.owner,
 		Platform: cfg.platform,
 		AppId:    cfg.appID,
+		Users:    cfg.users,
 	}
 
 	collaborator, err := clt.client.DeleteAppCollaborator(g)

@@ -40,3 +40,4 @@ examples: install
 	terraform init examples
 	terraform plan examples
 	terraform apply examples
+	terraform destroy examples
