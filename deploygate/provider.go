@@ -15,20 +15,10 @@ func Provider() *schema.Provider {
 				Sensitive:   true,
 				DefaultFunc: schema.EnvDefaultFunc("DG_API_KEY", nil),
 			},
-			"user_name": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("DG_USER_NAME", nil),
-			},
-			"organization_name": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Sensitive:   true,
-				DefaultFunc: schema.EnvDefaultFunc("DG_ORGANIZATION_NAME", nil),
-			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"deploygate_app_collaborator": dataSourceAppCollaborator(),
+			"deploygate_app_collaborator":    dataSourceAppCollaborator(),
+			"deploygate_organization_member": dataSourceOrganizationMember(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"deploygate_app_collaborator": resourceAppCollaborator(),

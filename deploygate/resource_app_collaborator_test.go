@@ -16,7 +16,7 @@ func Test_ResourceAppCollaborator_basic(t *testing.T) {
 			{
 				Config: resourceTestAppCollaboratorConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resourceTestAppCollaborator("resource.deploygate_app_collaborator.current"),
+					resourceTestAppCollaborator("deploygate_app_collaborator.current"),
 				),
 			},
 		},
@@ -27,7 +27,7 @@ func resourceTestAppCollaborator(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Can't find app users resource: %s", n)
+			return fmt.Errorf("Can't find resource: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -44,10 +44,6 @@ func resourceTestAppCollaborator(n string) resource.TestCheckFunc {
 
 		if rs.Primary.Attributes["app_id"] == "" {
 			return fmt.Errorf("app_id expected to not be nil")
-		}
-
-		if rs.Primary.Attributes["users"] == "" {
-			return fmt.Errorf("users expected to not be nil")
 		}
 
 		return nil

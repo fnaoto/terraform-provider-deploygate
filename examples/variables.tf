@@ -13,3 +13,7 @@ variable "owner" {
 variable "add_user_name" {
   type = string
 }
+
+variable "organization" {
+  type = string
+}

@@ -26,10 +26,6 @@ func Test_DGPreCheck(t *testing.T) {
 			t.Fatal("DG_API_KEY must be set for acceptance tests")
 		}
 
-		if os.Getenv("DG_USER_NAME") == "" && os.Getenv("DG_ORGANIZATION_NAME") == "" {
-			t.Fatal("DG_USER_NAME or DG_ORGANIZATION_NAME must be set for acceptance tests")
-		}
-
 		err := testDGProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
 		if err != nil {
 			t.Fatal(err)
