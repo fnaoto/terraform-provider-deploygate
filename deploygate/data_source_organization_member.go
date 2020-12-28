@@ -35,7 +35,7 @@ func dataSourceOrganizationMember() *schema.Resource {
 							Optional: true,
 						},
 						"inviting": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeBool,
 							Optional: true,
 						},
 					},
