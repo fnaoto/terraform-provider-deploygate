@@ -11,4 +11,4 @@ require (
 	github.com/recruit-mp/go-deploygate v0.0.0-20161124091054-af415c893ce8
 )
 
-replace github.com/recruit-mp/go-deploygate => ../go-deploygate
+replace github.com/recruit-mp/go-deploygate => ../go-deploygate //FIXME: update when PR has merged : https://github.com/recruit-mp/go-deploygate
