@@ -25,3 +25,6 @@ crash.log
 .terraform
 *.tfstate
 *.tfstate.*
+
+# Go module
+vendor
