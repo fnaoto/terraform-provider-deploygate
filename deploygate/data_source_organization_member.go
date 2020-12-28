@@ -22,11 +22,15 @@ func dataSourceOrganizationMember() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"username": {
+						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"email": {
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"url": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},

@@ -27,7 +27,7 @@ func testDataSourceOrganizationMember(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Can't find app users resource: %s", n)
+			return fmt.Errorf("Can't find resource: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

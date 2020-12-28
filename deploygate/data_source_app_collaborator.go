@@ -41,27 +41,6 @@ func dataSourceAppCollaborator() *schema.Resource {
 					},
 				},
 			},
-			"teams": {
-				Type:     schema.TypeSet,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"role": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-					},
-				},
-			},
-			"usage": {
-				Type:     schema.TypeMap,
-				Computed: true,
-				Elem:     schema.TypeInt,
-			},
 		},
 	}
 }
@@ -91,11 +70,6 @@ func dataSourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) err
 
 	d.SetId(fmt.Sprintf("%s/%s/%s", owner, platform, appID))
 	d.Set("users", rs.Users)
-	d.Set("teams", rs.Teams)
-	d.Set("usage", map[string]interface{}{
-		"max":  rs.Usage.Max,
-		"used": rs.Usage.Used,
-	})
 
 	return nil
 }
