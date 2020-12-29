@@ -58,13 +58,23 @@ func resourceOrganizationMember() *schema.Resource {
 // OrganizationMemberConfig is config for go-deploygate
 type OrganizationMemberConfig struct {
 	organization string
+	members      []OrganizationMemberConfigMembers
+}
+
+// OrganizationMemberConfigMembers is config for OrganizationMemberConfig
+type OrganizationMemberConfigMembers struct {
+	Type     string
+	name     string
+	url      string
+	iconURL  string
+	inviting bool
 }
 
 func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) error {
 
 	cfg := setOrganizationMemberConfig(d)
 
-	log.Printf("[DEBUG] resourceOrganizationMemberRead: %s", cfg)
+	log.Printf("[DEBUG] resourceOrganizationMemberRead")
 
 	rs, _ := meta.(*Client).getOrganizationMember(cfg)
 
@@ -77,7 +87,7 @@ func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) er
 func resourceOrganizationMemberCreate(d *schema.ResourceData, meta interface{}) error {
 	cfg := setOrganizationMemberConfig(d)
 
-	log.Printf("[DEBUG] resourceOrganizationMemberCreate %s", cfg)
+	log.Printf("[DEBUG] resourceOrganizationMemberCreate")
 
 	err := meta.(*Client).addOrganizationMember(cfg)
 
@@ -96,7 +106,7 @@ func resourceOrganizationMemberCreate(d *schema.ResourceData, meta interface{}) 
 func resourceOrganizationMemberUpdate(d *schema.ResourceData, meta interface{}) error {
 	cfg := setOrganizationMemberConfig(d)
 
-	log.Printf("[DEBUG] resourceOrganizationMemberUpdate %s", cfg)
+	log.Printf("[DEBUG] resourceOrganizationMemberUpdate")
 
 	derr := meta.(*Client).deleteOrganizationMember(cfg)
 
@@ -121,7 +131,7 @@ func resourceOrganizationMemberUpdate(d *schema.ResourceData, meta interface{}) 
 func resourceOrganizationMemberDelete(d *schema.ResourceData, meta interface{}) error {
 	cfg := setOrganizationMemberConfig(d)
 
-	log.Printf("[DEBUG] resourceOrganizationMemberDelete %s", cfg)
+	log.Printf("[DEBUG] resourceOrganizationMemberDelete")
 
 	err := meta.(*Client).deleteOrganizationMember(cfg)
 
@@ -150,35 +160,55 @@ func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_dep
 }
 
 func (clt *Client) addOrganizationMember(cfg *OrganizationMemberConfig) error {
-	g := &go_deploygate.AddOrganizationMemberInput{
-		OrganizationName: cfg.organization,
+	for _, member := range cfg.members {
+		g := &go_deploygate.AddOrganizationMemberInput{
+			OrganizationName: cfg.organization,
+			UserName:         member.name,
+		}
+
+		_, err := clt.client.AddOrganizationMember(g)
+
+		if err != nil {
+			return err
+		}
 	}
-
-	_, err := clt.client.AddOrganizationMember(g)
-
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
 func (clt *Client) deleteOrganizationMember(cfg *OrganizationMemberConfig) error {
-	g := &go_deploygate.DeleteOrganizationMemberInput{
-		OrganizationName: cfg.organization,
+	for _, member := range cfg.members {
+		g := &go_deploygate.DeleteOrganizationMemberInput{
+			OrganizationName: cfg.organization,
+			UserName:         member.name,
+		}
+
+		_, err := clt.client.DeleteOrganizationMember(g)
+
+		if err != nil {
+			return err
+		}
 	}
-
-	_, err := clt.client.DeleteOrganizationMember(g)
-
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
 func setOrganizationMemberConfig(d *schema.ResourceData) *OrganizationMemberConfig {
+	var members []OrganizationMemberConfigMembers
+
+	if v, ok := d.GetOk("members"); ok {
+		for _, element := range v.(*schema.Set).List() {
+			elem := element.(map[string]interface{})
+			members = append(members, OrganizationMemberConfigMembers{
+				Type:     elem["Type"].(string),
+				name:     elem["name"].(string),
+				url:      elem["url"].(string),
+				iconURL:  elem["iconURL"].(string),
+				inviting: elem["inviting"].(bool),
+			})
+		}
+	}
+
 	return &OrganizationMemberConfig{
 		organization: d.Get("organization").(string),
+		members:      members,
 	}
 }

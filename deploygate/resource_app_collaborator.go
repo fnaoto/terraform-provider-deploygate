@@ -68,7 +68,6 @@ type AppCollaboratorUsers struct {
 }
 
 func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error {
-
 	acc := setAppCollaboratorConfig(d)
 
 	log.Printf("[DEBUG] resourceAppCollaboratorRead")
@@ -142,7 +141,6 @@ func resourceAppCollaboratorDelete(d *schema.ResourceData, meta interface{}) err
 }
 
 func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygate.GetAppCollaboratorResponseResult, error) {
-
 	g := &go_deploygate.GetAppCollaboratorInput{
 		Owner:    cfg.owner,
 		Platform: cfg.platform,
@@ -181,7 +179,6 @@ func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
 
 func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
 	for _, user := range cfg.users {
-
 		g := &go_deploygate.DeleteAppCollaboratorInput{
 			Owner:    cfg.owner,
 			Platform: cfg.platform,
