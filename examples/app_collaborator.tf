@@ -19,6 +19,7 @@ variable "add_user_name" {
 # Data
 
 data "deploygate_app_collaborator" "current" {
+  provider = deploygate.user
   platform = var.platform
   app_id   = var.app_id
   owner    = var.owner
@@ -27,6 +28,7 @@ data "deploygate_app_collaborator" "current" {
 # Resource
 
 resource "deploygate_app_collaborator" "current" {
+  provider = deploygate.user
   platform = var.platform
   app_id   = var.app_id
   owner    = var.owner

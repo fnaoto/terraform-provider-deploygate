@@ -4,16 +4,25 @@ variable "organization" {
   type = string
 }
 
+variable "add_member_name" {
+  type = string
+}
+
 # Data
 
 data "deploygate_organization_member" "current" {
+  provider     = deploygate.organization
   organization = var.organization
 }
 
 # Resource
 
 resource "deploygate_organization_member" "current" {
+  provider     = deploygate.organization
   organization = var.organization
+  members {
+    name = var.add_member_name
+  }
 }
 
 # Output
