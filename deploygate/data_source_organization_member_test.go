@@ -43,6 +43,14 @@ func testDataSourceOrganizationMember(n string) resource.TestCheckFunc {
 }
 
 const testDataSourceOrganizationMemberConfig = `
+provider "deploygate" {
+	api_key = var.organization_api_key
+}
+
+variable "organization_api_key" {
+  type = string
+}
+
 data "deploygate_organization_member" "current" {
 	organization = var.organization
 }

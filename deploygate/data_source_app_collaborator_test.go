@@ -51,6 +51,14 @@ func testDataSourceAppCollaborator(n string) resource.TestCheckFunc {
 }
 
 const testDataSourceAppCollaboratorConfig = `
+provider "deploygate" {
+	api_key = var.user_api_key
+}
+
+variable "user_api_key" {
+  type = string
+}
+
 data "deploygate_app_collaborator" "current" {
 	owner    = var.owner
 	platform = var.platform

@@ -51,12 +51,21 @@ func resourceTestAppCollaborator(n string) resource.TestCheckFunc {
 }
 
 const resourceTestAppCollaboratorConfig = `
+provider "deploygate" {
+	api_key = var.user_api_key
+}
+
+variable "user_api_key" {
+  type = string
+}
+
 resource "deploygate_app_collaborator" "current" {
 	owner    = var.owner
 	platform = var.platform
 	app_id   = var.app_id
 	users {
 		name = var.add_user_name
+		role = var.add_user_role
 	}
 }
 
