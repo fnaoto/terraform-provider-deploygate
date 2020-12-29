@@ -11,7 +11,6 @@ import (
 func dataSourceAppCollaborator() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceAppCollaboratorRead,
-
 		Schema: map[string]*schema.Schema{
 			"owner": {
 				Type:     schema.TypeString,
