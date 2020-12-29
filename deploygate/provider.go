@@ -21,7 +21,8 @@ func Provider() *schema.Provider {
 			"deploygate_organization_member": dataSourceOrganizationMember(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"deploygate_app_collaborator": resourceAppCollaborator(),
+			"deploygate_app_collaborator":    resourceAppCollaborator(),
+			"deploygate_organization_member": resourceOrganizationMember(),
 		},
 	}
 
