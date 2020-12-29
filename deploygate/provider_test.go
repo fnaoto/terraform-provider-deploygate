@@ -2,7 +2,6 @@ package deploygate
 
 import (
 	"context"
-	"os"
 	"sync"
 	"testing"
 
@@ -22,10 +21,6 @@ var testDGProviders map[string]*schema.Provider
 
 func Test_DGPreCheck(t *testing.T) {
 	testDGProviderConfigure.Do(func() {
-		if os.Getenv("DG_API_KEY") == "" {
-			t.Fatal("DG_API_KEY must be set for acceptance tests")
-		}
-
 		err := testDGProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
 		if err != nil {
 			t.Fatal(err)

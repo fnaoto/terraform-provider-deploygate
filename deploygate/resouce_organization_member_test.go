@@ -8,22 +8,22 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func Test_DataSourceOrganizationMember_basic(t *testing.T) {
+func Test_ResourceOrganizationMember_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { Test_DGPreCheck(t) },
 		Providers: testDGProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testDataSourceOrganizationMemberConfig,
+				Config: resourceTestOrganizationMemberConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testDataSourceOrganizationMember("data.deploygate_organization_member.current"),
+					resourceTestOrganizationMember("deploygate_organization_member.current"),
 				),
 			},
 		},
 	})
 }
 
-func testDataSourceOrganizationMember(n string) resource.TestCheckFunc {
+func resourceTestOrganizationMember(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -42,7 +42,7 @@ func testDataSourceOrganizationMember(n string) resource.TestCheckFunc {
 	}
 }
 
-const testDataSourceOrganizationMemberConfig = `
+const resourceTestOrganizationMemberConfig = `
 provider "deploygate" {
 	api_key = var.organization_api_key
 }
@@ -51,11 +51,18 @@ variable "organization_api_key" {
   type = string
 }
 
-data "deploygate_organization_member" "current" {
+resource "deploygate_organization_member" "current" {
 	organization = var.organization
+	members {
+		name = var.add_member_name
+	}
 }
 
 variable "organization" {
+  type = string
+}
+
+variable "add_member_name" {
   type = string
 }
 `

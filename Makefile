@@ -1,6 +1,4 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
-HOSTNAME=fnaoto
-NAMESPACE=com
 NAME=deploygate
 BINARY=terraform-provider-${NAME}
 VERSION=0.1
