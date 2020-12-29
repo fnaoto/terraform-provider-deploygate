@@ -25,28 +25,28 @@ func resourceOrganizationMember() *schema.Resource {
 			},
 			"members": {
 				Type:     schema.TypeSet,
-				Computed: true,
+				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 						"url": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"icon_url": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"inviting": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -198,10 +198,10 @@ func setOrganizationMemberConfig(d *schema.ResourceData) *OrganizationMemberConf
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
 			members = append(members, OrganizationMemberConfigMembers{
-				Type:     elem["Type"].(string),
+				Type:     elem["type"].(string),
 				name:     elem["name"].(string),
 				url:      elem["url"].(string),
-				iconURL:  elem["iconURL"].(string),
+				iconURL:  elem["icon_url"].(string),
 				inviting: elem["inviting"].(bool),
 			})
 		}
