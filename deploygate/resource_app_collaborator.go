@@ -53,12 +53,18 @@ func resourceAppCollaborator() *schema.Resource {
 	}
 }
 
-// AppCollaboratorConfig : is config for go-deploygate
+// AppCollaboratorConfig is config for go-deploygate
 type AppCollaboratorConfig struct {
 	Owner    string
 	Platform string
 	AppID    string
-	Users    []go_deploygate.Collaborator
+	Users    []*AppCollaboratorConfigUsers
+}
+
+// AppCollaboratorConfigUsers is struct for Users
+type AppCollaboratorConfigUsers struct {
+	Name string
+	Role int
 }
 
 func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error {
@@ -149,7 +155,7 @@ func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
 			Platform: cfg.Platform,
 			AppId:    cfg.AppID,
 			Users:    user.Name,
-			Role:     int(user.Role),
+			Role:     user.Role,
 		}
 
 		_, err := clt.client.AddAppCollaborator(g)
@@ -183,24 +189,22 @@ func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
 }
 
 func setAppCollaboratorConfig(d *schema.ResourceData) *AppCollaboratorConfig {
-	var users []go_deploygate.Collaborator
+	var users []*AppCollaboratorConfigUsers
 
 	if v, ok := d.GetOk("users"); ok {
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
-			users = append(users, go_deploygate.Collaborator{
+			users = append(users, &AppCollaboratorConfigUsers{
 				Name: elem["name"].(string),
-				Role: uint(elem["role"].(int)),
+				Role: elem["role"].(int),
 			})
 		}
 	}
 
-	acc := &AppCollaboratorConfig{
+	return &AppCollaboratorConfig{
 		Owner:    d.Get("owner").(string),
 		Platform: d.Get("platform").(string),
 		AppID:    d.Get("app_id").(string),
 		Users:    users,
 	}
-
-	return acc
 }
