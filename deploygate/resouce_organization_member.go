@@ -215,7 +215,7 @@ func setOrganizationMemberConfig(d *schema.ResourceData) *OrganizationMemberConf
 	}
 
 	return &OrganizationMemberConfig{
-		Organization: d.Id(),
+		Organization: d.Get("organization").(string),
 		Members:      members,
 	}
 }
