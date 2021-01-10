@@ -3,6 +3,7 @@ NAME=deploygate
 BINARY=terraform-provider-${NAME}
 VERSION=0.1
 OS_ARCH=darwin_amd64
+EXAMPLES=examples
 
 default: install
 
@@ -36,7 +37,7 @@ testacc: install
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m   
 
 examples: install
-	terraform init examples
-	terraform plan examples
-	terraform apply examples
-	terraform destroy examples
+	terraform init $(EXAMPLES)
+	terraform plan $(EXAMPLES)
+	terraform apply $(EXAMPLES)
+	terraform destroy $(EXAMPLES)

@@ -52,10 +52,10 @@ variable "organization_api_key" {
 }
 
 resource "deploygate_organization_member" "current" {
-	organization = var.organization
-	members {
-		name = var.add_member_name
-	}
+  organization = var.organization
+  members {
+    name = var.add_member_name
+  }
 }
 
 variable "organization" {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	go_deploygate "github.com/fnaoto/go-deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	go_deploygate "github.com/recruit-mp/go-deploygate"
 )
 
 func dataSourceOrganizationMember() *schema.Resource {
