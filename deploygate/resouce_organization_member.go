@@ -3,8 +3,8 @@ package deploygate
 import (
 	"log"
 
+	go_deploygate "github.com/fnaoto/go-deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	go_deploygate "github.com/recruit-mp/go-deploygate"
 )
 
 func resourceOrganizationMember() *schema.Resource {
@@ -28,9 +28,25 @@ func resourceOrganizationMember() *schema.Resource {
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"name": {
 							Type:     schema.TypeString,
 							Required: true,
+						},
+						"url": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"icon_url": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"inviting": {
+							Type:     schema.TypeBool,
+							Computed: true,
 						},
 					},
 				},
@@ -42,12 +58,7 @@ func resourceOrganizationMember() *schema.Resource {
 // OrganizationMemberConfig is config for go-deploygate
 type OrganizationMemberConfig struct {
 	Organization string
-	Members      []OrganizationMemberConfigMembers
-}
-
-// OrganizationMemberConfigMembers is struct for Members
-type OrganizationMemberConfigMembers struct {
-	Name string
+	Members      []*go_deploygate.Member
 }
 
 func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) error {
@@ -161,18 +172,20 @@ func (clt *Client) deleteOrganizationMember(cfg *OrganizationMemberConfig) error
 }
 
 func setOrganizationMemberConfig(d *schema.ResourceData) *OrganizationMemberConfig {
-	var members []OrganizationMemberConfigMembers
+	var members []*go_deploygate.Member
 
 	if v, ok := d.GetOk("members"); ok {
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
-			members = append(members, OrganizationMemberConfigMembers{
-				Name: elem["name"].(string),
+			members = append(members, &go_deploygate.Member{
+				Type:     elem["type"].(string),
+				Name:     elem["name"].(string),
+				URL:      elem["url"].(string),
+				IconURL:  elem["icon_url"].(string),
+				Inviting: elem["inviting"].(bool),
 			})
 		}
 	}
-
-	log.Printf("[DEBUG] setOrganizationMemberConfig: %s", members[0])
 
 	return &OrganizationMemberConfig{
 		Organization: d.Get("organization").(string),

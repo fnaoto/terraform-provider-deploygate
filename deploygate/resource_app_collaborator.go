@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	go_deploygate "github.com/fnaoto/go-deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	go_deploygate "github.com/recruit-mp/go-deploygate"
 )
 
 func resourceAppCollaborator() *schema.Resource {
@@ -58,7 +58,7 @@ type AppCollaboratorConfig struct {
 	Owner    string
 	Platform string
 	AppID    string
-	Users    []*AppCollaboratorConfigUsers
+	Users    []*go_deploygate.Collaborator
 }
 
 // AppCollaboratorConfigUsers is struct for Users
@@ -155,7 +155,7 @@ func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
 			Platform: cfg.Platform,
 			AppId:    cfg.AppID,
 			Users:    user.Name,
-			Role:     user.Role,
+			Role:     int(user.Role),
 		}
 
 		_, err := clt.client.AddAppCollaborator(g)
@@ -189,14 +189,14 @@ func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
 }
 
 func setAppCollaboratorConfig(d *schema.ResourceData) *AppCollaboratorConfig {
-	var users []*AppCollaboratorConfigUsers
+	var users []*go_deploygate.Collaborator
 
 	if v, ok := d.GetOk("users"); ok {
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
-			users = append(users, &AppCollaboratorConfigUsers{
+			users = append(users, &go_deploygate.Collaborator{
 				Name: elem["name"].(string),
-				Role: elem["role"].(int),
+				Role: uint(elem["role"].(int)),
 			})
 		}
 	}
