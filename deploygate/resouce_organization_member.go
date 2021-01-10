@@ -14,10 +14,6 @@ func resourceOrganizationMember() *schema.Resource {
 		Update: resourceOrganizationMemberUpdate,
 		Delete: resourceOrganizationMemberDelete,
 
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
-
 		Schema: map[string]*schema.Schema{
 			"organization": {
 				Type:     schema.TypeString,
@@ -71,18 +67,8 @@ func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
-	var members []*go_deploygate.Member
-
-	for _, csm := range cfg.Members {
-		for _, rsm := range rs.Members {
-			if csm.Name == rsm.Name {
-				members = append(members, rsm)
-			}
-		}
-	}
-
 	d.SetId(cfg.Organization)
-	d.Set("members", members)
+	d.Set("members", rs.Members)
 
 	return nil
 }
@@ -91,14 +77,20 @@ func resourceOrganizationMemberCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] resourceOrganizationMemberCreate")
 
 	cfg := setOrganizationMemberConfig(d)
-	err := meta.(*Client).addOrganizationMember(cfg)
+	aerr := meta.(*Client).addOrganizationMember(cfg)
 
-	if err != nil {
-		return err
+	if aerr != nil {
+		return aerr
+	}
+
+	rs, gerr := meta.(*Client).getOrganizationMember(cfg)
+
+	if gerr != nil {
+		return gerr
 	}
 
 	d.SetId(cfg.Organization)
-	d.Set("members", cfg.Members)
+	d.Set("members", rs.Members)
 
 	return nil
 }
@@ -119,8 +111,14 @@ func resourceOrganizationMemberUpdate(d *schema.ResourceData, meta interface{}) 
 		return aerr
 	}
 
+	rs, gerr := meta.(*Client).getOrganizationMember(cfg)
+
+	if gerr != nil {
+		return gerr
+	}
+
 	d.SetId(cfg.Organization)
-	d.Set("members", cfg.Members)
+	d.Set("members", rs.Members)
 
 	return nil
 }
@@ -152,6 +150,18 @@ func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_dep
 	if err != nil {
 		return nil, err
 	}
+
+	var members []*go_deploygate.Member
+
+	for _, csm := range cfg.Members {
+		for _, rsm := range rs.Members {
+			if csm.Name == rsm.Name {
+				members = append(members, rsm)
+			}
+		}
+	}
+
+	rs.Members = members
 
 	return rs, nil
 }

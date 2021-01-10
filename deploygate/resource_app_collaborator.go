@@ -17,10 +17,6 @@ func resourceAppCollaborator() *schema.Resource {
 		Update: resourceAppCollaboratorUpdate,
 		Delete: resourceAppCollaboratorDelete,
 
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
-
 		Schema: map[string]*schema.Schema{
 			"owner": {
 				Type:     schema.TypeString,
@@ -78,18 +74,8 @@ func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error
 		return gerr
 	}
 
-	var users []*go_deploygate.Collaborator
-
-	for _, cus := range cfg.Users {
-		for _, rus := range rs.Users {
-			if cus.Name == rus.Name {
-				users = append(users, rus)
-			}
-		}
-	}
-
 	d.SetId(fmt.Sprintf("%s/%s/%s", cfg.Owner, cfg.Platform, cfg.AppID))
-	d.Set("users", users)
+	d.Set("users", rs.Users)
 
 	return nil
 }
@@ -109,8 +95,14 @@ func resourceAppCollaboratorCreate(d *schema.ResourceData, meta interface{}) err
 		return aerr
 	}
 
+	rs, gerr := meta.(*Client).getAppCollaborator(cfg)
+
+	if gerr != nil {
+		return gerr
+	}
+
 	d.SetId(fmt.Sprintf("%s/%s/%s", cfg.Owner, cfg.Platform, cfg.AppID))
-	d.Set("users", cfg.Users)
+	d.Set("users", rs.Users)
 
 	return nil
 }
@@ -136,8 +128,14 @@ func resourceAppCollaboratorUpdate(d *schema.ResourceData, meta interface{}) err
 		return aerr
 	}
 
+	rs, gerr := meta.(*Client).getAppCollaborator(cfg)
+
+	if gerr != nil {
+		return gerr
+	}
+
 	d.SetId(fmt.Sprintf("%s/%s/%s", cfg.Owner, cfg.Platform, cfg.AppID))
-	d.Set("users", cfg.Users)
+	d.Set("users", rs.Users)
 
 	return nil
 }
@@ -171,13 +169,25 @@ func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygat
 
 	log.Printf("[DEBUG] getAppCollaborator: %s", g)
 
-	collaborator, err := clt.client.GetAppCollaborator(g)
+	rs, err := clt.client.GetAppCollaborator(g)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return collaborator.Results, nil
+	var users []*go_deploygate.Collaborator
+
+	for _, cus := range cfg.Users {
+		for _, rus := range rs.Results.Users {
+			if cus.Name == rus.Name {
+				users = append(users, rus)
+			}
+		}
+	}
+
+	rs.Results.Users = users
+
+	return rs.Results, nil
 }
 
 func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
