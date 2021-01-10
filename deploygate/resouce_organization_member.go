@@ -65,9 +65,24 @@ func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] resourceOrganizationMemberRead")
 
 	cfg := setOrganizationMemberConfig(d)
+	rs, err := meta.(*Client).getOrganizationMember(cfg)
+
+	if err != nil {
+		return err
+	}
+
+	var members []*go_deploygate.Member
+
+	for _, csm := range cfg.Members {
+		for _, rsm := range rs.Members {
+			if csm.Name == rsm.Name {
+				members = append(members, rsm)
+			}
+		}
+	}
 
 	d.SetId(cfg.Organization)
-	d.Set("members", cfg.Members)
+	d.Set("members", members)
 
 	return nil
 }
@@ -130,6 +145,8 @@ func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_dep
 		OrganizationName: cfg.Organization,
 	}
 
+	log.Printf("[DEBUG] getOrganizationMember: %s", cfg.Organization)
+
 	rs, err := clt.client.GetOrganizationMember(g)
 
 	if err != nil {
@@ -188,7 +205,7 @@ func setOrganizationMemberConfig(d *schema.ResourceData) *OrganizationMemberConf
 	}
 
 	return &OrganizationMemberConfig{
-		Organization: d.Get("organization").(string),
+		Organization: d.Id(),
 		Members:      members,
 	}
 }
