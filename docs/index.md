@@ -60,7 +60,7 @@ provider "deploygate" {
 }
 ```
 
-### Authentication
+## Authentication
 ---
 
 The deploygate providing credentials for authentication.
@@ -68,9 +68,9 @@ The deploygate providing credentials for authentication.
 - [User API Key](https://deploygate.com/settings)
 - [Organization API Key](https://docs.deploygate.com/docs/organization-api-key)
 
-#### Static
+### Static
 
-Static API Key can be adding an `api_key`, in-line in the deploygate provider block.
+(Not recommended) Static API Key can be adding an `api_key`, in-line in the deploygate provider block.
 
 - Example
 
@@ -86,7 +86,7 @@ provider "deploygate" {
 }
 ```
 
-#### Environment Variables
+### Environment Variables
 
 You can provide api_key via `DG_API_KEY`, environment variables.
 
@@ -96,7 +96,7 @@ You can provide api_key via `DG_API_KEY`, environment variables.
 provider "deploygate" {}
 ```
 
-### Argument Reference
+## Argument Reference
 ---
 
 The following arguments are supported in the deploygate provider block:
