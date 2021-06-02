@@ -53,7 +53,7 @@ output "data_app_collaborator_users" {
 
 - **platform** (Required) `(String)` Platform of application, `android` or `ios`.
 
-## Argument Reference
+## Attributes Reference
 ---
 
 - **users** `(Object)` (see [below for users](#users))

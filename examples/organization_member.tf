@@ -34,3 +34,11 @@ output "data_organization_member_id" {
 output "data_organization_member_members" {
   value = data.deploygate_organization_member.current.members
 }
+
+output "resource_organization_member_id" {
+  value = deploygate_organization_member.current.id
+}
+
+output "resource_organization_member_members" {
+  value = deploygate_organization_member.current.members
+}

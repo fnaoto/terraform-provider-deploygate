@@ -57,3 +57,14 @@ resource "deploygate_app_collaborator" "current" {
 The users blocks supports the following arguments:
 
 - **name** (Required) `(String)` Name of a user to add to collaborators.
+
+## Attributes Reference
+---
+
+- **users** `(Object)` (see [below for users](#users))
+
+### users
+
+- **name** `(String)` Name of the user.
+
+- **role** `(Number)` Role of the user.

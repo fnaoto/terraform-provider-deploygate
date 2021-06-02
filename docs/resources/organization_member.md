@@ -56,3 +56,20 @@ resource "deploygate_organization_member" "current" {
 The members blocks supports the following arguments:
 
 - **name** (Required) `(String)` Name of a user to add to orgazation member.
+
+## Attributes Reference
+---
+
+- **members** `(Object)` Data of the organization members.  (see [below for members](#members))
+
+### members
+
+- **icon_url** `(String)` Icon URL for user profile.
+
+- **inviting** `(Boolean)` If the user has been inviting or not.
+
+- **name** `(String)` Name of the user.
+
+- **type** `(String)` Type of the user that is user or tester.
+
+- **url** `(String)` Url of the user account.
