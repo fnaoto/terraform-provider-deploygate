@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    deploygate = {
+      source = "fnaoto/deploygate"
+    }
+  }
+}
+
 provider "deploygate" {
   alias   = "user"
   api_key = var.user_api_key
