@@ -175,7 +175,7 @@ func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
 			Platform: cfg.Platform,
 			AppId:    cfg.AppID,
 			Users:    member.Name,
-			Role:     string(member.Role),
+			Role:     fmt.Sprint(member.Role),
 		}
 
 		_, err := clt.client.AddAppMembers(g)
