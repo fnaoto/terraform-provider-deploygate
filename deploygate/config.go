@@ -1,7 +1,7 @@
 package deploygate
 
 import (
-	go_deploygate "github.com/fnaoto/go-deploygate"
+	go_deploygate "github.com/fnaoto/go_deploygate"
 )
 
 // Config : configuration for deploygate client

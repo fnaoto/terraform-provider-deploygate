@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	go_deploygate "github.com/fnaoto/go-deploygate"
+	go_deploygate "github.com/fnaoto/go_deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -53,13 +53,13 @@ func dataSourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) err
 
 	log.Printf("[DEBUG] dataSourceAppCollaboratorRead: %s, %s, %s", owner, platform, appID)
 
-	g := &go_deploygate.GetAppCollaboratorInput{
+	g := &go_deploygate.GetAppMembersRequest{
 		Owner:    owner,
 		Platform: platform,
 		AppId:    appID,
 	}
 
-	collaborator, err := client.GetAppCollaborator(g)
+	collaborator, err := client.GetAppMembers(g)
 
 	if err != nil {
 		return err
