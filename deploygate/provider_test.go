@@ -21,6 +21,7 @@ var testDGProviders map[string]*schema.Provider
 
 func Test_DGPreCheck(t *testing.T) {
 	testDGProviderConfigure.Do(func() {
+		t.Setenv("DG_API_KEY", "dummy")
 		err := testDGProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
 		if err != nil {
 			t.Fatal(err)
