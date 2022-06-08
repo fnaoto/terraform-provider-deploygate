@@ -54,7 +54,7 @@ type AppCollaboratorConfig struct {
 	Owner    string
 	Platform string
 	AppID    string
-	Members  []*go_deploygate.Member
+	Users    []*go_deploygate.User
 }
 
 func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error {
@@ -153,29 +153,29 @@ func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygat
 		return nil, err
 	}
 
-	var members []*go_deploygate.Member
+	var users []go_deploygate.User
 
-	for _, cus := range cfg.Members {
+	for _, cus := range cfg.Users {
 		for _, rus := range rs.Results.Users {
 			if cus.Name == rus.Name {
-				members = append(members, rus)
+				users = append(users, rus)
 			}
 		}
 	}
 
-	rs.Results.Users = members
+	rs.Results.Users = users
 
-	return rs.Results, nil
+	return &rs.Results, nil
 }
 
 func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
-	for _, member := range cfg.Members {
+	for _, user := range cfg.Users {
 		g := &go_deploygate.AddAppMembersRequest{
 			Owner:    cfg.Owner,
 			Platform: cfg.Platform,
 			AppId:    cfg.AppID,
-			Users:    member.Name,
-			Role:     fmt.Sprint(member.Role),
+			Users:    user.Name,
+			Role:     fmt.Sprint(user.Role),
 		}
 
 		_, err := clt.client.AddAppMembers(g)
@@ -190,12 +190,12 @@ func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
 }
 
 func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
-	for _, member := range cfg.Members {
+	for _, user := range cfg.Users {
 		g := &go_deploygate.RemoveAppMembersRequest{
 			Owner:    cfg.Owner,
 			Platform: cfg.Platform,
 			AppId:    cfg.AppID,
-			Users:    member.Name,
+			Users:    user.Name,
 		}
 
 		_, err := clt.client.RemoveAppMembers(g)
@@ -209,12 +209,12 @@ func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
 }
 
 func setAppCollaboratorConfig(d *schema.ResourceData) *AppCollaboratorConfig {
-	var members []*go_deploygate.Member
+	var users []*go_deploygate.User
 
 	if v, ok := d.GetOk("users"); ok {
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
-			members = append(members, &go_deploygate.Member{
+			users = append(users, &go_deploygate.User{
 				Name: elem["name"].(string),
 				Role: uint(elem["role"].(int)),
 			})
@@ -225,6 +225,6 @@ func setAppCollaboratorConfig(d *schema.ResourceData) *AppCollaboratorConfig {
 		Owner:    d.Get("owner").(string),
 		Platform: d.Get("platform").(string),
 		AppID:    d.Get("app_id").(string),
-		Members:  members,
+		Users:    users,
 	}
 }

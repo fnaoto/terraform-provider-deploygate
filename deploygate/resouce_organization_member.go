@@ -54,7 +54,7 @@ func resourceOrganizationMember() *schema.Resource {
 // OrganizationMemberConfig is config for go-deploygate
 type OrganizationMemberConfig struct {
 	Organization string
-	Members      []*go_deploygate.User
+	Members      []*go_deploygate.Member
 }
 
 func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) error {
@@ -151,7 +151,7 @@ func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_dep
 		return nil, err
 	}
 
-	var members []*go_deploygate.Member
+	var members []go_deploygate.Member
 
 	for _, csm := range cfg.Members {
 		for _, rsm := range rs.Members {
@@ -199,16 +199,16 @@ func (clt *Client) deleteOrganizationMember(cfg *OrganizationMemberConfig) error
 }
 
 func setOrganizationMemberConfig(d *schema.ResourceData) *OrganizationMemberConfig {
-	var members []*go_deploygate.User
+	var members []*go_deploygate.Member
 
 	if v, ok := d.GetOk("members"); ok {
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
-			members = append(members, &go_deploygate.User{
+			members = append(members, &go_deploygate.Member{
 				Type:    elem["type"].(string),
 				Name:    elem["name"].(string),
-				Url:     elem["url"].(string),
 				IconUrl: elem["icon_url"].(string),
+				Url:     elem["url"].(string),
 			})
 		}
 	}
