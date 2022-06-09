@@ -3,7 +3,7 @@ package deploygate
 import (
 	"log"
 
-	go_deploygate "github.com/fnaoto/go-deploygate"
+	go_deploygate "github.com/fnaoto/go_deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -38,10 +38,6 @@ func resourceOrganizationMember() *schema.Resource {
 						},
 						"icon_url": {
 							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"inviting": {
-							Type:     schema.TypeBool,
 							Computed: true,
 						},
 					},
@@ -138,20 +134,20 @@ func resourceOrganizationMemberDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_deploygate.GetOrganizationMemberResponse, error) {
-	g := &go_deploygate.GetOrganizationMemberInput{
-		OrganizationName: cfg.Organization,
+func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_deploygate.ListOrganizationMembersResponse, error) {
+	g := &go_deploygate.ListOrganizationMembersRequest{
+		Organization: cfg.Organization,
 	}
 
 	log.Printf("[DEBUG] getOrganizationMember: %s", cfg.Organization)
 
-	rs, err := clt.client.GetOrganizationMember(g)
+	rs, err := clt.client.ListOrganizationMembers(g)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var members []*go_deploygate.Member
+	var members []go_deploygate.Member
 
 	for _, csm := range cfg.Members {
 		for _, rsm := range rs.Members {
@@ -168,12 +164,12 @@ func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_dep
 
 func (clt *Client) addOrganizationMember(cfg *OrganizationMemberConfig) error {
 	for _, member := range cfg.Members {
-		g := &go_deploygate.AddOrganizationMemberInput{
-			OrganizationName: cfg.Organization,
-			UserName:         member.Name,
+		g := &go_deploygate.AddOrganizationMemberByUserNameRequest{
+			Organization: cfg.Organization,
+			UserName:     member.Name,
 		}
 
-		_, err := clt.client.AddOrganizationMember(g)
+		_, err := clt.client.AddOrganizationMemberByUserName(g)
 
 		if err != nil {
 			return err
@@ -184,12 +180,12 @@ func (clt *Client) addOrganizationMember(cfg *OrganizationMemberConfig) error {
 
 func (clt *Client) deleteOrganizationMember(cfg *OrganizationMemberConfig) error {
 	for _, member := range cfg.Members {
-		g := &go_deploygate.DeleteOrganizationMemberInput{
-			OrganizationName: cfg.Organization,
-			UserName:         member.Name,
+		g := &go_deploygate.RemoveOrganizationMemberByUserNameRequest{
+			Organization: cfg.Organization,
+			UserName:     member.Name,
 		}
 
-		_, err := clt.client.DeleteOrganizationMember(g)
+		_, err := clt.client.RemoveOrganizationMemberByUserName(g)
 
 		if err != nil {
 			return err
@@ -205,11 +201,10 @@ func setOrganizationMemberConfig(d *schema.ResourceData) *OrganizationMemberConf
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
 			members = append(members, &go_deploygate.Member{
-				Type:     elem["type"].(string),
-				Name:     elem["name"].(string),
-				URL:      elem["url"].(string),
-				IconURL:  elem["icon_url"].(string),
-				Inviting: elem["inviting"].(bool),
+				Type:    elem["type"].(string),
+				Name:    elem["name"].(string),
+				IconUrl: elem["icon_url"].(string),
+				Url:     elem["url"].(string),
 			})
 		}
 	}

@@ -53,8 +53,6 @@ output "data_organization_member_members" {
 
 - **icon_url** `(String)` Icon URL for user profile.
 
-- **inviting** `(Boolean)` If the user has been inviting or not.
-
 - **name** `(String)` Name of the user.
 
 - **type** `(String)` Type of the user that is user or tester.

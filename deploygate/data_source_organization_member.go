@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	go_deploygate "github.com/fnaoto/go-deploygate"
+	go_deploygate "github.com/fnaoto/go_deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -38,10 +38,6 @@ func dataSourceOrganizationMember() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"inviting": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
 					},
 				},
 			},
@@ -56,11 +52,11 @@ func dataSourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[DEBUG] dataSourceOrganizationMemberRead: %s", organization)
 
-	g := &go_deploygate.GetOrganizationMemberInput{
-		OrganizationName: organization,
+	g := &go_deploygate.ListOrganizationMembersRequest{
+		Organization: organization,
 	}
 
-	om, err := client.GetOrganizationMember(g)
+	om, err := client.ListOrganizationMembers(g)
 
 	if err != nil {
 		return err

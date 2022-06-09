@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	go_deploygate "github.com/fnaoto/go-deploygate"
+	go_deploygate "github.com/fnaoto/go_deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -40,7 +40,7 @@ func resourceAppCollaborator() *schema.Resource {
 						"role": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1,
+							Default:  2,
 						},
 					},
 				},
@@ -54,7 +54,7 @@ type AppCollaboratorConfig struct {
 	Owner    string
 	Platform string
 	AppID    string
-	Users    []*go_deploygate.Collaborator
+	Users    []*go_deploygate.User
 }
 
 func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error {
@@ -138,8 +138,8 @@ func resourceAppCollaboratorDelete(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygate.GetAppCollaboratorResponseResult, error) {
-	g := &go_deploygate.GetAppCollaboratorInput{
+func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygate.GetAppMembersResponseResult, error) {
+	g := &go_deploygate.GetAppMembersRequest{
 		Owner:    cfg.Owner,
 		Platform: cfg.Platform,
 		AppId:    cfg.AppID,
@@ -147,13 +147,13 @@ func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygat
 
 	log.Printf("[DEBUG] getAppCollaborator: %s", g)
 
-	rs, err := clt.client.GetAppCollaborator(g)
+	rs, err := clt.client.GetAppMembers(g)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var users []*go_deploygate.Collaborator
+	var users []go_deploygate.User
 
 	for _, cus := range cfg.Users {
 		for _, rus := range rs.Results.Users {
@@ -165,20 +165,20 @@ func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygat
 
 	rs.Results.Users = users
 
-	return rs.Results, nil
+	return &rs.Results, nil
 }
 
 func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
 	for _, user := range cfg.Users {
-		g := &go_deploygate.AddAppCollaboratorInput{
+		g := &go_deploygate.AddAppMembersRequest{
 			Owner:    cfg.Owner,
 			Platform: cfg.Platform,
 			AppId:    cfg.AppID,
 			Users:    user.Name,
-			Role:     int(user.Role),
+			Role:     fmt.Sprint(user.Role),
 		}
 
-		_, err := clt.client.AddAppCollaborator(g)
+		_, err := clt.client.AddAppMembers(g)
 
 		if err != nil {
 			return err
@@ -191,14 +191,14 @@ func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
 
 func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
 	for _, user := range cfg.Users {
-		g := &go_deploygate.DeleteAppCollaboratorInput{
+		g := &go_deploygate.RemoveAppMembersRequest{
 			Owner:    cfg.Owner,
 			Platform: cfg.Platform,
 			AppId:    cfg.AppID,
 			Users:    user.Name,
 		}
 
-		_, err := clt.client.DeleteAppCollaborator(g)
+		_, err := clt.client.RemoveAppMembers(g)
 
 		if err != nil {
 			return err
@@ -209,12 +209,12 @@ func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
 }
 
 func setAppCollaboratorConfig(d *schema.ResourceData) *AppCollaboratorConfig {
-	var users []*go_deploygate.Collaborator
+	var users []*go_deploygate.User
 
 	if v, ok := d.GetOk("users"); ok {
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
-			users = append(users, &go_deploygate.Collaborator{
+			users = append(users, &go_deploygate.User{
 				Name: elem["name"].(string),
 				Role: uint(elem["role"].(int)),
 			})
