@@ -55,6 +55,8 @@ github.com/fnaoto/go_deploygate v1.0.2 h1:pkjSAFGOarSAirmrKUwwrQ9mAGwXFMBLFa0S40
 github.com/fnaoto/go_deploygate v1.0.2/go.mod h1:IoBJ1KTL+YccCxeba7Rpx8rGslQFOwAOYkiye9ibkCc=
 github.com/fnaoto/go_deploygate v1.0.3 h1:MZK0rH1+7SdxX3vXKsHozFyN3wIGByfUmt7YhkJrFWY=
 github.com/fnaoto/go_deploygate v1.0.3/go.mod h1:IoBJ1KTL+YccCxeba7Rpx8rGslQFOwAOYkiye9ibkCc=
+github.com/fnaoto/go_deploygate v1.0.4 h1:0fui2MSx1TtdGNfhRHRrvv19PFW22imGPLhM0fGt52M=
+github.com/fnaoto/go_deploygate v1.0.4/go.mod h1:IoBJ1KTL+YccCxeba7Rpx8rGslQFOwAOYkiye9ibkCc=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/gliderlabs/ssh v0.2.2/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
 github.com/go-git/gcfg v1.5.0 h1:Q5ViNfGF8zFgyJWPqYwA7qGFoMTEiBmdlkcfRmpIMa4=
