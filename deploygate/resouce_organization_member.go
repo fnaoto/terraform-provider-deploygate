@@ -40,10 +40,6 @@ func resourceOrganizationMember() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"inviting": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
 					},
 				},
 			},

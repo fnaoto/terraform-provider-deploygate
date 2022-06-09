@@ -40,7 +40,7 @@ func resourceAppCollaborator() *schema.Resource {
 						"role": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  1,
+							Default:  2,
 						},
 					},
 				},
