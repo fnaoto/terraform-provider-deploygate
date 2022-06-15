@@ -8,22 +8,22 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func Test_ResourceAppCollaborator_basic(t *testing.T) {
+func Test_DataSourceAppMember_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { Test_DGPreCheck(t) },
 		Providers: testDGProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: resourceTestAppCollaboratorConfig,
+				Config: testDataSourceAppMemberConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resourceTestAppCollaborator("deploygate_app_collaborator.current"),
+					testDataSourceAppMember("data.deploygate_app_member.current"),
 				),
 			},
 		},
 	})
 }
 
-func resourceTestAppCollaborator(n string) resource.TestCheckFunc {
+func testDataSourceAppMember(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -50,7 +50,7 @@ func resourceTestAppCollaborator(n string) resource.TestCheckFunc {
 	}
 }
 
-const resourceTestAppCollaboratorConfig = `
+const testDataSourceAppMemberConfig = `
 provider "deploygate" {
 	api_key = var.user_api_key
 }
@@ -59,14 +59,10 @@ variable "user_api_key" {
   type = string
 }
 
-resource "deploygate_app_collaborator" "current" {
+data "deploygate_app_member" "current" {
 	owner    = var.owner
 	platform = var.platform
 	app_id   = var.app_id
-	users {
-		name = var.add_user_name
-		role = var.add_user_role
-	}
 }
 
 variable "platform" {
@@ -78,14 +74,6 @@ variable "app_id" {
 }
 
 variable "owner" {
-  type = string
-}
-
-variable "add_user_name" {
-  type = string
-}
-
-variable "add_user_role" {
   type = string
 }
 `

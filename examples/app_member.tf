@@ -18,7 +18,7 @@ variable "add_user_name" {
 
 # Data
 
-data "deploygate_app_collaborator" "current" {
+data "deploygate_app_member" "current" {
   provider = deploygate.user
   platform = var.platform
   app_id   = var.app_id
@@ -27,7 +27,7 @@ data "deploygate_app_collaborator" "current" {
 
 # Resource
 
-resource "deploygate_app_collaborator" "current" {
+resource "deploygate_app_member" "current" {
   provider = deploygate.user
   platform = var.platform
   app_id   = var.app_id
@@ -39,18 +39,18 @@ resource "deploygate_app_collaborator" "current" {
 
 # Output
 
-output "data_app_collaborator_id" {
-  value = data.deploygate_app_collaborator.current.id
+output "data_app_member_id" {
+  value = data.deploygate_app_member.current.id
 }
 
-output "data_app_collaborator_users" {
-  value = data.deploygate_app_collaborator.current.users
+output "data_app_member_users" {
+  value = data.deploygate_app_member.current.users
 }
 
-output "resource_app_collaborator_id" {
-  value = deploygate_app_collaborator.current.id
+output "resource_app_member_id" {
+  value = deploygate_app_member.current.id
 }
 
-output "resource_app_collaborator_users" {
-  value = deploygate_app_collaborator.current.users
+output "resource_app_member_users" {
+  value = deploygate_app_member.current.users
 }

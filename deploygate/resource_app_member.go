@@ -8,12 +8,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceAppCollaborator() *schema.Resource {
+func resourceAppMember() *schema.Resource {
 	return &schema.Resource{
-		Read:   resourceAppCollaboratorRead,
-		Create: resourceAppCollaboratorCreate,
-		Update: resourceAppCollaboratorUpdate,
-		Delete: resourceAppCollaboratorDelete,
+		Read:   resourceAppMemberRead,
+		Create: resourceAppMemberCreate,
+		Update: resourceAppMemberUpdate,
+		Delete: resourceAppMemberDelete,
 
 		Schema: map[string]*schema.Schema{
 			"owner": {
@@ -49,19 +49,19 @@ func resourceAppCollaborator() *schema.Resource {
 	}
 }
 
-// AppCollaboratorConfig is config for go-deploygate
-type AppCollaboratorConfig struct {
+// AppMemberConfig is config for go-deploygate
+type AppMemberConfig struct {
 	Owner    string
 	Platform string
 	AppID    string
 	Users    []*go_deploygate.User
 }
 
-func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] resourceAppCollaboratorRead")
+func resourceAppMemberRead(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[DEBUG] resourceAppMemberRead")
 
-	cfg := setAppCollaboratorConfig(d)
-	rs, gerr := meta.(*Client).getAppCollaborator(cfg)
+	cfg := setAppMemberConfig(d)
+	rs, gerr := meta.(*Client).getAppMember(cfg)
 
 	if gerr != nil {
 		return gerr
@@ -73,17 +73,17 @@ func resourceAppCollaboratorRead(d *schema.ResourceData, meta interface{}) error
 	return nil
 }
 
-func resourceAppCollaboratorCreate(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] resourceAppCollaboratorCreate")
+func resourceAppMemberCreate(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[DEBUG] resourceAppMemberCreate")
 
-	cfg := setAppCollaboratorConfig(d)
-	aerr := meta.(*Client).addAppCollaborator(cfg)
+	cfg := setAppMemberConfig(d)
+	aerr := meta.(*Client).addAppMember(cfg)
 
 	if aerr != nil {
 		return aerr
 	}
 
-	rs, gerr := meta.(*Client).getAppCollaborator(cfg)
+	rs, gerr := meta.(*Client).getAppMember(cfg)
 
 	if gerr != nil {
 		return gerr
@@ -95,23 +95,23 @@ func resourceAppCollaboratorCreate(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func resourceAppCollaboratorUpdate(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] resourceAppCollaboratorUpdate")
+func resourceAppMemberUpdate(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[DEBUG] resourceAppMemberUpdate")
 
-	cfg := setAppCollaboratorConfig(d)
-	derr := meta.(*Client).deleteAppCollaborator(cfg)
+	cfg := setAppMemberConfig(d)
+	derr := meta.(*Client).deleteAppMember(cfg)
 
 	if derr != nil {
 		return derr
 	}
 
-	aerr := meta.(*Client).addAppCollaborator(cfg)
+	aerr := meta.(*Client).addAppMember(cfg)
 
 	if aerr != nil {
 		return aerr
 	}
 
-	rs, gerr := meta.(*Client).getAppCollaborator(cfg)
+	rs, gerr := meta.(*Client).getAppMember(cfg)
 
 	if gerr != nil {
 		return gerr
@@ -123,11 +123,11 @@ func resourceAppCollaboratorUpdate(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func resourceAppCollaboratorDelete(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] resourceAppCollaboratorDelete")
+func resourceAppMemberDelete(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[DEBUG] resourceAppMemberDelete")
 
-	cfg := setAppCollaboratorConfig(d)
-	derr := meta.(*Client).deleteAppCollaborator(cfg)
+	cfg := setAppMemberConfig(d)
+	derr := meta.(*Client).deleteAppMember(cfg)
 
 	if derr != nil {
 		return derr
@@ -138,14 +138,14 @@ func resourceAppCollaboratorDelete(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygate.GetAppMembersResponseResult, error) {
+func (clt *Client) getAppMember(cfg *AppMemberConfig) (*go_deploygate.GetAppMembersResponseResult, error) {
 	g := &go_deploygate.GetAppMembersRequest{
 		Owner:    cfg.Owner,
 		Platform: cfg.Platform,
 		AppId:    cfg.AppID,
 	}
 
-	log.Printf("[DEBUG] getAppCollaborator: %s", g)
+	log.Printf("[DEBUG] getAppMember: %s", g)
 
 	rs, err := clt.client.GetAppMembers(g)
 
@@ -168,7 +168,7 @@ func (clt *Client) getAppCollaborator(cfg *AppCollaboratorConfig) (*go_deploygat
 	return &rs.Results, nil
 }
 
-func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
+func (clt *Client) addAppMember(cfg *AppMemberConfig) error {
 	for _, user := range cfg.Users {
 		g := &go_deploygate.AddAppMembersRequest{
 			Owner:    cfg.Owner,
@@ -189,7 +189,7 @@ func (clt *Client) addAppCollaborator(cfg *AppCollaboratorConfig) error {
 	return nil
 }
 
-func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
+func (clt *Client) deleteAppMember(cfg *AppMemberConfig) error {
 	for _, user := range cfg.Users {
 		g := &go_deploygate.RemoveAppMembersRequest{
 			Owner:    cfg.Owner,
@@ -208,7 +208,7 @@ func (clt *Client) deleteAppCollaborator(cfg *AppCollaboratorConfig) error {
 	return nil
 }
 
-func setAppCollaboratorConfig(d *schema.ResourceData) *AppCollaboratorConfig {
+func setAppMemberConfig(d *schema.ResourceData) *AppMemberConfig {
 	var users []*go_deploygate.User
 
 	if v, ok := d.GetOk("users"); ok {
@@ -221,7 +221,7 @@ func setAppCollaboratorConfig(d *schema.ResourceData) *AppCollaboratorConfig {
 		}
 	}
 
-	return &AppCollaboratorConfig{
+	return &AppMemberConfig{
 		Owner:    d.Get("owner").(string),
 		Platform: d.Get("platform").(string),
 		AppID:    d.Get("app_id").(string),
