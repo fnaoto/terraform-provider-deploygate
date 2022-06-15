@@ -3,12 +3,12 @@
 page_title: "deploygate Provider"
 subcategory: ""
 description: |- 
-  The deploygate provider is used to manage app collaborators and organizations members of deploygate.
+  The deploygate provider is used to manage app members and organizations members of deploygate.
 ---
 
 # deploygate Provider
 
-  The deploygate provider is used to manage app collaborators and organizations members of the deploygate.
+  The deploygate provider is used to manage app members and organizations members of the deploygate.
 
   The deploygate is distribution platform for in-development mobile app (iOS and Android), delivering apps for teams/organizations/testers.
 

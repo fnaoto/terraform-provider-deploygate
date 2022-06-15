@@ -17,11 +17,11 @@ func Provider() *schema.Provider {
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"deploygate_app_collaborator":    dataSourceAppCollaborator(),
+			"deploygate_app_member":          dataSourceAppMember(),
 			"deploygate_organization_member": dataSourceOrganizationMember(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"deploygate_app_collaborator":    resourceAppCollaborator(),
+			"deploygate_app_member":          resourceAppMember(),
 			"deploygate_organization_member": resourceOrganizationMember(),
 		},
 	}
