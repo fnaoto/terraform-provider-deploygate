@@ -44,10 +44,10 @@ func resourceTestEnterpriseMember(n string) resource.TestCheckFunc {
 
 const resourceTestEnterpriseMemberConfig = `
 provider "deploygate" {
-	api_key = var.organization_api_key
+	api_key = var.enterprise_api_key
 }
 
-variable "organization_api_key" {
+variable "enterprise_api_key" {
   type = string
 }
 
