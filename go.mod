@@ -3,7 +3,7 @@ module terraform-provider-deploygate
 go 1.17
 
 require (
-	github.com/fnaoto/go_deploygate v1.0.6
+	github.com/fnaoto/go_deploygate v1.0.7
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.17.0
 )
 
