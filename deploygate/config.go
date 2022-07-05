@@ -15,10 +15,11 @@ type Client struct {
 }
 
 // Client : API Client for deploygate
-func (c *Config) Client() (interface{}, error) {
+func (cfg *Config) Client() (*Client, error) {
 	var clnt Client
 
-	client, err := go_deploygate.NewClient(c.apiKey)
-	clnt.client = client
+	c, err := go_deploygate.NewClient(cfg.apiKey)
+	clnt.client = c
+
 	return &clnt, err
 }

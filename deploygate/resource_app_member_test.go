@@ -11,7 +11,7 @@ import (
 func Test_ResourceAppMember_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { Test_DGPreCheck(t) },
-		Providers: testDGProviders,
+		Providers: initProvider("app_members"),
 		Steps: []resource.TestStep{
 			{
 				Config: resourceTestAppMemberConfig,
