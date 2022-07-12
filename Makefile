@@ -4,7 +4,6 @@ BINARY=terraform-provider-${NAME}
 VERSION=0.1
 OS_ARCH=darwin_amd64
 EXAMPLES=examples
-TESTARGS=-run Test_ResourceAppMember_basic
 
 default: install
 
