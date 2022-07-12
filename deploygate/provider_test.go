@@ -77,7 +77,7 @@ func providerConfigureVCR(p *schema.Provider, t *testing.T) schema.ConfigureFunc
 		}
 
 		rec.AddFilter(func(i *cassette.Interaction) error {
-			delete(i.Request.Form, "token")
+			delete(i.Request.Headers, "Authorization")
 			return nil
 		})
 
