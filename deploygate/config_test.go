@@ -7,13 +7,13 @@ func Test_Client(t *testing.T) {
 		apiKey: "api key",
 	}
 
-	client, err := config.Client()
+	err := config.initClient()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if client == nil {
+	if config.client == nil {
 		t.Fatalf("Nil Client.")
 	}
 }

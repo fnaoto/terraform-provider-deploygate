@@ -7,19 +7,15 @@ import (
 // Config : configuration for deploygate client
 type Config struct {
 	apiKey string
-}
-
-// Client : client for deploygate
-type Client struct {
 	client *go_deploygate.Client
 }
 
 // Client : API Client for deploygate
-func (cfg *Config) Client() (*Client, error) {
-	var clnt Client
-
+func (cfg *Config) initClient() error {
 	c, err := go_deploygate.NewClient(cfg.apiKey)
-	clnt.client = c
-
-	return &clnt, err
+	cfg.client = c
+	if err != nil {
+		return err
+	}
+	return nil
 }

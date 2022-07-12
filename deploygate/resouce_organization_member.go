@@ -57,7 +57,7 @@ func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] resourceOrganizationMemberRead")
 
 	cfg := setOrganizationMemberConfig(d)
-	rs, err := meta.(*Client).getOrganizationMember(cfg)
+	rs, err := meta.(*Config).getOrganizationMember(cfg)
 
 	if err != nil {
 		return err
@@ -73,13 +73,13 @@ func resourceOrganizationMemberCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] resourceOrganizationMemberCreate")
 
 	cfg := setOrganizationMemberConfig(d)
-	aerr := meta.(*Client).addOrganizationMember(cfg)
+	aerr := meta.(*Config).addOrganizationMember(cfg)
 
 	if aerr != nil {
 		return aerr
 	}
 
-	rs, gerr := meta.(*Client).getOrganizationMember(cfg)
+	rs, gerr := meta.(*Config).getOrganizationMember(cfg)
 
 	if gerr != nil {
 		return gerr
@@ -95,19 +95,19 @@ func resourceOrganizationMemberUpdate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] resourceOrganizationMemberUpdate")
 
 	cfg := setOrganizationMemberConfig(d)
-	derr := meta.(*Client).deleteOrganizationMember(cfg)
+	derr := meta.(*Config).deleteOrganizationMember(cfg)
 
 	if derr != nil {
 		return derr
 	}
 
-	aerr := meta.(*Client).addOrganizationMember(cfg)
+	aerr := meta.(*Config).addOrganizationMember(cfg)
 
 	if aerr != nil {
 		return aerr
 	}
 
-	rs, gerr := meta.(*Client).getOrganizationMember(cfg)
+	rs, gerr := meta.(*Config).getOrganizationMember(cfg)
 
 	if gerr != nil {
 		return gerr
@@ -123,7 +123,7 @@ func resourceOrganizationMemberDelete(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] resourceOrganizationMemberDelete")
 
 	cfg := setOrganizationMemberConfig(d)
-	err := meta.(*Client).deleteOrganizationMember(cfg)
+	err := meta.(*Config).deleteOrganizationMember(cfg)
 
 	if err != nil {
 		return err
@@ -134,14 +134,14 @@ func resourceOrganizationMemberDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_deploygate.ListOrganizationMembersResponse, error) {
+func (c *Config) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_deploygate.ListOrganizationMembersResponse, error) {
 	g := &go_deploygate.ListOrganizationMembersRequest{
 		Organization: cfg.Organization,
 	}
 
 	log.Printf("[DEBUG] getOrganizationMember: %s", cfg.Organization)
 
-	rs, err := clt.client.ListOrganizationMembers(g)
+	rs, err := c.client.ListOrganizationMembers(g)
 
 	if err != nil {
 		return nil, err
@@ -162,14 +162,14 @@ func (clt *Client) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_dep
 	return rs, nil
 }
 
-func (clt *Client) addOrganizationMember(cfg *OrganizationMemberConfig) error {
+func (c *Config) addOrganizationMember(cfg *OrganizationMemberConfig) error {
 	for _, member := range cfg.Members {
 		g := &go_deploygate.AddOrganizationMemberByUserNameRequest{
 			Organization: cfg.Organization,
 			UserName:     member.Name,
 		}
 
-		_, err := clt.client.AddOrganizationMemberByUserName(g)
+		_, err := c.client.AddOrganizationMemberByUserName(g)
 
 		if err != nil {
 			return err
@@ -178,14 +178,14 @@ func (clt *Client) addOrganizationMember(cfg *OrganizationMemberConfig) error {
 	return nil
 }
 
-func (clt *Client) deleteOrganizationMember(cfg *OrganizationMemberConfig) error {
+func (c *Config) deleteOrganizationMember(cfg *OrganizationMemberConfig) error {
 	for _, member := range cfg.Members {
 		g := &go_deploygate.RemoveOrganizationMemberByUserNameRequest{
 			Organization: cfg.Organization,
 			UserName:     member.Name,
 		}
 
-		_, err := clt.client.RemoveOrganizationMemberByUserName(g)
+		_, err := c.client.RemoveOrganizationMemberByUserName(g)
 
 		if err != nil {
 			return err

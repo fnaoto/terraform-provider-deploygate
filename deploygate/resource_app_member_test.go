@@ -9,9 +9,8 @@ import (
 )
 
 func Test_ResourceAppMember_basic(t *testing.T) {
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { Test_DGPreCheck(t) },
-		Providers: initProvider("app_members"),
+	testWithVCR(t, resource.TestCase{
+		PreCheck: func() { Test_DGPreCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config: resourceTestAppMemberConfig,

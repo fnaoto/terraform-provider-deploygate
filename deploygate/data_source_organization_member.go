@@ -46,7 +46,7 @@ func dataSourceOrganizationMember() *schema.Resource {
 }
 
 func dataSourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client).client
+	client := meta.(*Config).client
 
 	organization := d.Get("organization").(string)
 

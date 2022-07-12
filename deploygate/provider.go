@@ -38,12 +38,11 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 			apiKey: d.Get("api_key").(string),
 		}
 
-		meta, err := config.Client()
-
+		err := config.initClient()
 		if err != nil {
 			return nil, err
 		}
 
-		return meta, nil
+		return config.client, nil
 	}
 }
