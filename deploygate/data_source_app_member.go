@@ -46,7 +46,7 @@ func dataSourceAppMember() *schema.Resource {
 }
 
 func dataSourceAppMemberRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client).client
+	client := meta.(*Config).client
 
 	owner := d.Get("owner").(string)
 	platform := d.Get("platform").(string)
