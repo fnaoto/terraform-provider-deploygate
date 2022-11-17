@@ -1,10 +1,16 @@
 package deploygate
 
-import "testing"
+import (
+	"testing"
+
+	go_deploygate "github.com/fnaoto/go_deploygate"
+)
 
 func Test_Client(t *testing.T) {
 	config := &Config{
-		apiKey: "api key",
+		clientConfig: go_deploygate.ClientConfig{
+			ApiKey: "api_key",
+		},
 	}
 
 	err := config.initClient()

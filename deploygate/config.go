@@ -6,13 +6,13 @@ import (
 
 // Config : configuration for deploygate client
 type Config struct {
-	apiKey string
-	client *go_deploygate.Client
+	clientConfig go_deploygate.ClientConfig
+	client       *go_deploygate.Client
 }
 
 // Client : API Client for deploygate
 func (cfg *Config) initClient() error {
-	c, err := go_deploygate.NewClient(cfg.apiKey)
+	c, err := go_deploygate.NewClient(cfg.clientConfig)
 	cfg.client = c
 	if err != nil {
 		return err

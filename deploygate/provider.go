@@ -1,6 +1,7 @@
 package deploygate
 
 import (
+	go_deploygate "github.com/fnaoto/go_deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -35,7 +36,9 @@ func Provider() *schema.Provider {
 func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 	return func(d *schema.ResourceData) (interface{}, error) {
 		config := Config{
-			apiKey: d.Get("api_key").(string),
+			clientConfig: go_deploygate.ClientConfig{
+				ApiKey: d.Get("api_key").(string),
+			},
 		}
 
 		err := config.initClient()
