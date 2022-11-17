@@ -2,6 +2,7 @@ package deploygate
 
 import (
 	"context"
+	"net/http"
 	"path/filepath"
 	"strconv"
 	"sync"
@@ -76,8 +77,9 @@ func providerConfigureVCR(p *schema.Provider, t *testing.T) schema.ConfigureFunc
 			return nil, err
 		}
 
-		rec.AddFilter(func(i *cassette.Interaction) error {
+		rec.AddSaveFilter(func(i *cassette.Interaction) error {
 			delete(i.Request.Headers, "Authorization")
+			i.Response.Headers = make(http.Header)
 			return nil
 		})
 
