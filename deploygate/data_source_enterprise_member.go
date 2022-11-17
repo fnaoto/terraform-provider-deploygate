@@ -65,7 +65,7 @@ func dataSourceEnterpriseMember() *schema.Resource {
 }
 
 func dataSourceEnterpriseMemberRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client).client
+	client := meta.(*Config).client
 
 	enterprise := d.Get("enterprise").(string)
 

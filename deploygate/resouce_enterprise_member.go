@@ -57,7 +57,7 @@ func resourceEnterpriseMemberRead(d *schema.ResourceData, meta interface{}) erro
 	log.Printf("[DEBUG] resourceEnterpriseMemberRead")
 
 	cfg := setEnterpriseMemberConfig(d)
-	rs, err := meta.(*Client).listEnterpriseMembers(cfg)
+	rs, err := meta.(*Config).listEnterpriseMembers(cfg)
 
 	if err != nil {
 		return err
@@ -73,13 +73,13 @@ func resourceEnterpriseMemberCreate(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] resourceEnterpriseMemberCreate")
 
 	cfg := setEnterpriseMemberConfig(d)
-	err := meta.(*Client).addEnterpriseMember(cfg)
+	err := meta.(*Config).addEnterpriseMember(cfg)
 
 	if err != nil {
 		return err
 	}
 
-	rs, err := meta.(*Client).listEnterpriseMembers(cfg)
+	rs, err := meta.(*Config).listEnterpriseMembers(cfg)
 
 	if err != nil {
 		return err
@@ -95,19 +95,19 @@ func resourceEnterpriseMemberUpdate(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] resourceEnterpriseMemberUpdate")
 
 	cfg := setEnterpriseMemberConfig(d)
-	err := meta.(*Client).deleteEnterpriseMember(cfg)
+	err := meta.(*Config).deleteEnterpriseMember(cfg)
 
 	if err != nil {
 		return err
 	}
 
-	err = meta.(*Client).addEnterpriseMember(cfg)
+	err = meta.(*Config).addEnterpriseMember(cfg)
 
 	if err != nil {
 		return err
 	}
 
-	rs, err := meta.(*Client).listEnterpriseMembers(cfg)
+	rs, err := meta.(*Config).listEnterpriseMembers(cfg)
 
 	if err != nil {
 		return err
@@ -123,7 +123,7 @@ func resourceEnterpriseMemberDelete(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] resourceEnterpriseMemberDelete")
 
 	cfg := setEnterpriseMemberConfig(d)
-	err := meta.(*Client).deleteEnterpriseMember(cfg)
+	err := meta.(*Config).deleteEnterpriseMember(cfg)
 
 	if err != nil {
 		return err
@@ -134,14 +134,14 @@ func resourceEnterpriseMemberDelete(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func (clt *Client) listEnterpriseMembers(cfg *EnterpriseMemberConfig) (*go_deploygate.ListEnterpriseMembersResponse, error) {
+func (c *Config) listEnterpriseMembers(cfg *EnterpriseMemberConfig) (*go_deploygate.ListEnterpriseMembersResponse, error) {
 	g := &go_deploygate.ListEnterpriseMembersRequest{
 		Enterprise: cfg.Enterprise,
 	}
 
 	log.Printf("[DEBUG] listEnterpriseMembers: %s", cfg.Enterprise)
 
-	rs, err := clt.client.ListEnterpriseMembers(g)
+	rs, err := c.client.ListEnterpriseMembers(g)
 
 	if err != nil {
 		return nil, err
@@ -162,14 +162,14 @@ func (clt *Client) listEnterpriseMembers(cfg *EnterpriseMemberConfig) (*go_deplo
 	return rs, nil
 }
 
-func (clt *Client) addEnterpriseMember(cfg *EnterpriseMemberConfig) error {
+func (c *Config) addEnterpriseMember(cfg *EnterpriseMemberConfig) error {
 	for _, member := range cfg.Members {
 		g := &go_deploygate.AddEnterpriseMemberRequest{
 			Enterprise: cfg.Enterprise,
 			User:       member.Name,
 		}
 
-		_, err := clt.client.AddEnterpriseMember(g)
+		_, err := c.client.AddEnterpriseMember(g)
 
 		if err != nil {
 			return err
@@ -178,14 +178,14 @@ func (clt *Client) addEnterpriseMember(cfg *EnterpriseMemberConfig) error {
 	return nil
 }
 
-func (clt *Client) deleteEnterpriseMember(cfg *EnterpriseMemberConfig) error {
+func (c *Config) deleteEnterpriseMember(cfg *EnterpriseMemberConfig) error {
 	for _, member := range cfg.Members {
 		g := &go_deploygate.RemoveEnterpriseMemberRequest{
 			Enterprise: cfg.Enterprise,
 			User:       member.Name,
 		}
 
-		_, err := clt.client.RemoveEnterpriseMember(g)
+		_, err := c.client.RemoveEnterpriseMember(g)
 
 		if err != nil {
 			return err

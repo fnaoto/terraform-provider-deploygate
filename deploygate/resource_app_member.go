@@ -61,7 +61,7 @@ func resourceAppMemberRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] resourceAppMemberRead")
 
 	cfg := setAppMemberConfig(d)
-	rs, gerr := meta.(*Client).getAppMember(cfg)
+	rs, gerr := meta.(*Config).getAppMember(cfg)
 
 	if gerr != nil {
 		return gerr
@@ -77,13 +77,13 @@ func resourceAppMemberCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] resourceAppMemberCreate")
 
 	cfg := setAppMemberConfig(d)
-	aerr := meta.(*Client).addAppMember(cfg)
+	aerr := meta.(*Config).addAppMember(cfg)
 
 	if aerr != nil {
 		return aerr
 	}
 
-	rs, gerr := meta.(*Client).getAppMember(cfg)
+	rs, gerr := meta.(*Config).getAppMember(cfg)
 
 	if gerr != nil {
 		return gerr
@@ -99,19 +99,19 @@ func resourceAppMemberUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] resourceAppMemberUpdate")
 
 	cfg := setAppMemberConfig(d)
-	derr := meta.(*Client).deleteAppMember(cfg)
+	derr := meta.(*Config).deleteAppMember(cfg)
 
 	if derr != nil {
 		return derr
 	}
 
-	aerr := meta.(*Client).addAppMember(cfg)
+	aerr := meta.(*Config).addAppMember(cfg)
 
 	if aerr != nil {
 		return aerr
 	}
 
-	rs, gerr := meta.(*Client).getAppMember(cfg)
+	rs, gerr := meta.(*Config).getAppMember(cfg)
 
 	if gerr != nil {
 		return gerr
@@ -127,7 +127,7 @@ func resourceAppMemberDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] resourceAppMemberDelete")
 
 	cfg := setAppMemberConfig(d)
-	derr := meta.(*Client).deleteAppMember(cfg)
+	derr := meta.(*Config).deleteAppMember(cfg)
 
 	if derr != nil {
 		return derr
@@ -138,7 +138,7 @@ func resourceAppMemberDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func (clt *Client) getAppMember(cfg *AppMemberConfig) (*go_deploygate.GetAppMembersResponseResult, error) {
+func (c *Config) getAppMember(cfg *AppMemberConfig) (*go_deploygate.GetAppMembersResponseResult, error) {
 	g := &go_deploygate.GetAppMembersRequest{
 		Owner:    cfg.Owner,
 		Platform: cfg.Platform,
@@ -147,7 +147,7 @@ func (clt *Client) getAppMember(cfg *AppMemberConfig) (*go_deploygate.GetAppMemb
 
 	log.Printf("[DEBUG] getAppMember: %s", g)
 
-	rs, err := clt.client.GetAppMembers(g)
+	rs, err := c.client.GetAppMembers(g)
 
 	if err != nil {
 		return nil, err
@@ -168,7 +168,7 @@ func (clt *Client) getAppMember(cfg *AppMemberConfig) (*go_deploygate.GetAppMemb
 	return &rs.Results, nil
 }
 
-func (clt *Client) addAppMember(cfg *AppMemberConfig) error {
+func (c *Config) addAppMember(cfg *AppMemberConfig) error {
 	for _, user := range cfg.Users {
 		g := &go_deploygate.AddAppMembersRequest{
 			Owner:    cfg.Owner,
@@ -178,7 +178,7 @@ func (clt *Client) addAppMember(cfg *AppMemberConfig) error {
 			Role:     fmt.Sprint(user.Role),
 		}
 
-		_, err := clt.client.AddAppMembers(g)
+		_, err := c.client.AddAppMembers(g)
 
 		if err != nil {
 			return err
@@ -189,7 +189,7 @@ func (clt *Client) addAppMember(cfg *AppMemberConfig) error {
 	return nil
 }
 
-func (clt *Client) deleteAppMember(cfg *AppMemberConfig) error {
+func (c *Config) deleteAppMember(cfg *AppMemberConfig) error {
 	for _, user := range cfg.Users {
 		g := &go_deploygate.RemoveAppMembersRequest{
 			Owner:    cfg.Owner,
@@ -198,7 +198,7 @@ func (clt *Client) deleteAppMember(cfg *AppMemberConfig) error {
 			Users:    user.Name,
 		}
 
-		_, err := clt.client.RemoveAppMembers(g)
+		_, err := c.client.RemoveAppMembers(g)
 
 		if err != nil {
 			return err
