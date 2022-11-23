@@ -64,7 +64,6 @@ resource "deploygate_app_member" "current" {
 	app_id   = var.app_id
 	users {
 		name = var.add_user_name
-		role = var.add_user_role
 	}
 }
 
@@ -81,10 +80,6 @@ variable "owner" {
 }
 
 variable "add_user_name" {
-  type = string
-}
-
-variable "add_user_role" {
   type = string
 }
 `

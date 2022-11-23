@@ -38,9 +38,8 @@ func resourceAppMember() *schema.Resource {
 							Required: true,
 						},
 						"role": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Default:  2,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 					},
 				},
@@ -175,7 +174,6 @@ func (c *Config) addAppMember(cfg *AppMemberConfig) error {
 			Platform: cfg.Platform,
 			AppId:    cfg.AppID,
 			Users:    user.Name,
-			Role:     fmt.Sprint(user.Role),
 		}
 
 		_, err := c.client.AddAppMembers(g)
@@ -216,7 +214,6 @@ func setAppMemberConfig(d *schema.ResourceData) *AppMemberConfig {
 			elem := element.(map[string]interface{})
 			users = append(users, &go_deploygate.User{
 				Name: elem["name"].(string),
-				Role: uint(elem["role"].(int)),
 			})
 		}
 	}

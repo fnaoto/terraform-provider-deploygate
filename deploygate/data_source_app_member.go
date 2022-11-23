@@ -34,9 +34,8 @@ func dataSourceAppMember() *schema.Resource {
 							Optional: true,
 						},
 						"role": {
-							Type:     schema.TypeInt,
+							Type:     schema.TypeString,
 							Optional: true,
-							Default:  2,
 						},
 					},
 				},
