@@ -57,14 +57,14 @@ func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] resourceOrganizationMemberRead")
 
 	cfg := setOrganizationMemberConfig(d)
-	rs, err := meta.(*Config).getOrganizationMember(cfg)
+	resp, err := meta.(*Config).getOrganizationMember(cfg)
 
 	if err != nil {
 		return err
 	}
 
 	d.SetId(cfg.Organization)
-	d.Set("members", rs.Members)
+	d.Set("members", resp.Members)
 
 	return nil
 }
@@ -73,20 +73,20 @@ func resourceOrganizationMemberCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] resourceOrganizationMemberCreate")
 
 	cfg := setOrganizationMemberConfig(d)
-	aerr := meta.(*Config).addOrganizationMember(cfg)
+	err := meta.(*Config).addOrganizationMember(cfg)
 
-	if aerr != nil {
-		return aerr
+	if err != nil {
+		return err
 	}
 
-	rs, gerr := meta.(*Config).getOrganizationMember(cfg)
+	resp, err := meta.(*Config).getOrganizationMember(cfg)
 
-	if gerr != nil {
-		return gerr
+	if err != nil {
+		return err
 	}
 
 	d.SetId(cfg.Organization)
-	d.Set("members", rs.Members)
+	d.Set("members", resp.Members)
 
 	return nil
 }
@@ -94,27 +94,29 @@ func resourceOrganizationMemberCreate(d *schema.ResourceData, meta interface{}) 
 func resourceOrganizationMemberUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] resourceOrganizationMemberUpdate")
 
+	var err error
+
 	cfg := setOrganizationMemberConfig(d)
-	derr := meta.(*Config).deleteOrganizationMember(cfg)
+	err = meta.(*Config).deleteOrganizationMember(cfg)
 
-	if derr != nil {
-		return derr
+	if err != nil {
+		return err
 	}
 
-	aerr := meta.(*Config).addOrganizationMember(cfg)
+	err = meta.(*Config).addOrganizationMember(cfg)
 
-	if aerr != nil {
-		return aerr
+	if err != nil {
+		return err
 	}
 
-	rs, gerr := meta.(*Config).getOrganizationMember(cfg)
+	resp, err := meta.(*Config).getOrganizationMember(cfg)
 
-	if gerr != nil {
-		return gerr
+	if err != nil {
+		return err
 	}
 
 	d.SetId(cfg.Organization)
-	d.Set("members", rs.Members)
+	d.Set("members", resp.Members)
 
 	return nil
 }
@@ -141,7 +143,7 @@ func (c *Config) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_deplo
 
 	log.Printf("[DEBUG] getOrganizationMember: %s", cfg.Organization)
 
-	rs, err := c.client.ListOrganizationMembers(g)
+	resp, err := c.client.ListOrganizationMembers(g)
 
 	if err != nil {
 		return nil, err
@@ -150,16 +152,16 @@ func (c *Config) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_deplo
 	var members []go_deploygate.Member
 
 	for _, csm := range cfg.Members {
-		for _, rsm := range rs.Members {
+		for _, rsm := range resp.Members {
 			if csm.Name == rsm.Name {
 				members = append(members, rsm)
 			}
 		}
 	}
 
-	rs.Members = members
+	resp.Members = members
 
-	return rs, nil
+	return resp, nil
 }
 
 func (c *Config) addOrganizationMember(cfg *OrganizationMemberConfig) error {
