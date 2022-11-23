@@ -32,11 +32,31 @@ func resourceEnterpriseMember() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 						},
+						"icon_url": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"url": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"icon_url": {
+						"full_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"email": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"role": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"created_at": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"last_access_at": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
