@@ -45,7 +45,7 @@ resource "deploygate_enterprise_member" "current" {
 
 - **members** - (Required) `(Block)` To add a deploygate user to the enterprise member. (see [below for members](#members))
 
-- **enterprise** (Required) `(String)` Name of the enterprise. [Check your enterprise](https://deploygate.com)
+- **enterprise** (Required) `(String)` Name of the enterprise. [Check your enterprise](https://deploygate.com/enterprises)
 
 ### members
 
