@@ -53,13 +53,6 @@ type OrganizationMemberConfig struct {
 	Members      []*go_deploygate.Member
 }
 
-// OrganizationTeamMemberConfig is config for go-deploygate
-type OrganizationTeamMemberConfig struct {
-	Organization string
-	Team         string
-	Members      []*go_deploygate.Member
-}
-
 func resourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] resourceOrganizationMemberRead %#v", d)
 
@@ -171,34 +164,6 @@ func (c *Config) getOrganizationMember(cfg *OrganizationMemberConfig) (*go_deplo
 	return resp, nil
 }
 
-func (c *Config) getOrganizationTeamMember(cfg *OrganizationTeamMemberConfig) (*go_deploygate.ListOrganizationTeamMembersResponse, error) {
-	log.Printf("[DEBUG] getOrganizationTeamMember: %#v", cfg)
-
-	req := &go_deploygate.ListOrganizationTeamMembersRequest{
-		Organization: cfg.Organization,
-	}
-
-	resp, err := c.client.ListOrganizationTeamMembers(req)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var users []go_deploygate.Member
-
-	for _, csm := range cfg.Members {
-		for _, rsm := range resp.Users {
-			if csm.Name == rsm.Name {
-				users = append(users, rsm)
-			}
-		}
-	}
-
-	resp.Users = users
-
-	return resp, nil
-}
-
 func (c *Config) addOrganizationMember(cfg *OrganizationMemberConfig) error {
 	log.Printf("[DEBUG] addOrganizationMember: %#v", cfg)
 
@@ -217,25 +182,6 @@ func (c *Config) addOrganizationMember(cfg *OrganizationMemberConfig) error {
 	return nil
 }
 
-func (c *Config) addOrganizationTeamMember(cfg *OrganizationTeamMemberConfig) error {
-	log.Printf("[DEBUG] addOrganizationTeamMember %#v", cfg)
-
-	for _, member := range cfg.Members {
-		req := &go_deploygate.AddOrganizationTeamMemberRequest{
-			Organization: cfg.Organization,
-			Team:         cfg.Team,
-			User:         member.Name,
-		}
-
-		_, err := c.client.AddOrganizationTeamMember(req)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (c *Config) deleteOrganizationMember(cfg *OrganizationMemberConfig) error {
 	log.Printf("[DEBUG] deleteOrganizationMember %#v", cfg)
 
@@ -246,25 +192,6 @@ func (c *Config) deleteOrganizationMember(cfg *OrganizationMemberConfig) error {
 		}
 
 		_, err := c.client.RemoveOrganizationMemberByUserName(g)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (c *Config) deleteOrganizationTeamMember(cfg *OrganizationTeamMemberConfig) error {
-	log.Printf("[DEBUG] deleteOrganizationTeamMember %#v", cfg)
-
-	for _, member := range cfg.Members {
-		req := &go_deploygate.RemoveOrganizationTeamMemberRequest{
-			Organization: cfg.Organization,
-			Team:         cfg.Team,
-			User:         member.Name,
-		}
-
-		_, err := c.client.RemoveOrganizationTeamMember(req)
 
 		if err != nil {
 			return err
@@ -292,30 +219,6 @@ func setOrganizationMemberConfig(d *schema.ResourceData) *OrganizationMemberConf
 
 	return &OrganizationMemberConfig{
 		Organization: d.Get("organization").(string),
-		Members:      members,
-	}
-}
-
-func setOrganizationTeamMemberConfig(d *schema.ResourceData) *OrganizationTeamMemberConfig {
-	log.Printf("[DEBUG] setOrganizationTeamMemberConfig %#v", d)
-
-	var members []*go_deploygate.Member
-
-	if v, ok := d.GetOk("members"); ok {
-		for _, element := range v.(*schema.Set).List() {
-			elem := element.(map[string]interface{})
-			members = append(members, &go_deploygate.Member{
-				Type:    elem["type"].(string),
-				Name:    elem["name"].(string),
-				IconUrl: elem["icon_url"].(string),
-				Url:     elem["url"].(string),
-			})
-		}
-	}
-
-	return &OrganizationTeamMemberConfig{
-		Organization: d.Get("organization").(string),
-		Team:         d.Get("team").(string),
 		Members:      members,
 	}
 }
