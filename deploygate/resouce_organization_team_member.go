@@ -128,10 +128,10 @@ func resourceOrganizationTeamMemberUpdate(d *schema.ResourceData, meta interface
 }
 
 func resourceOrganizationTeamMemberDelete(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] resourceOrganizationMemberDelete %#v", d)
+	log.Printf("[DEBUG] resourceOrganizationTeamMemberDelete %#v", d)
 
-	cfg := setOrganizationMemberConfig(d)
-	err := meta.(*Config).deleteOrganizationMember(cfg)
+	cfg := setOrganizationTeamMemberConfig(d)
+	err := meta.(*Config).deleteOrganizationTeamMember(cfg)
 
 	if err != nil {
 		return err
@@ -147,6 +147,7 @@ func (c *Config) getOrganizationTeamMember(cfg *OrganizationTeamMemberConfig) (*
 
 	req := &go_deploygate.ListOrganizationTeamMembersRequest{
 		Organization: cfg.Organization,
+		Team:         cfg.Team,
 	}
 
 	resp, err := c.client.ListOrganizationTeamMembers(req)
