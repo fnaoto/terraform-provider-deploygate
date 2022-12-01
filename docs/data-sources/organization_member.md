@@ -3,12 +3,12 @@
 page_title: "deploygate_organization_member Data Source - terraform-provider-deploygate"
 subcategory: ""
 description: |-
-  Retrieves informantion about a existing enterprise member.
+  Retrieves informantion about a existing organization member.
 ---
 
 # deploygate_organization_member (Data Source)
 
-Retrieves informantion about a existing enterprise member.
+Retrieves informantion about a existing organization member.
 
 ## Example Usage
 
@@ -37,12 +37,12 @@ data "deploygate_organization_member" "current" {
 
 ### Required
 
-- `organization` (String) Name of the enterprise. [Check your enterprises](https://deploygate.com/enterprises)
+- `organization` (String) Name of the organization. [Check your organizations](https://deploygate.com/organizations)
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `members` (Set of Object) Data of the enterprise users. (see [below for nested schema](#nestedatt--members))
+- `members` (Set of Object) Data of the organization users. (see [below for nested schema](#nestedatt--members))
 
 <a id="nestedatt--members"></a>
 ### Nested Schema for `members`

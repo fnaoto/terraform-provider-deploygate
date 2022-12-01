@@ -43,7 +43,7 @@ data "deploygate_organization_team_member" "current" {
 ### Required
 
 - `organization` (String) Name of the organization. [Check your organizations](https://deploygate.com/organizations)
-- `team` (String) Name of the organization team.
+- `team` (String) Name of the team in organization.
 
 ### Read-Only
 
