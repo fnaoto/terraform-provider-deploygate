@@ -20,7 +20,7 @@ func dataSourceOrganizationTeamMember() *schema.Resource {
 				Required:    true,
 			},
 			"team": {
-				Description: "Name of the organization team.",
+				Description: "Name of the team in organization.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},

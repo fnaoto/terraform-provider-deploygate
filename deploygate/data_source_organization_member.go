@@ -10,17 +10,17 @@ import (
 
 func dataSourceOrganizationMember() *schema.Resource {
 	return &schema.Resource{
-		Description: "Retrieves informantion about a existing enterprise member.",
+		Description: "Retrieves informantion about a existing organization member.",
 		Read:        dataSourceOrganizationMemberRead,
 
 		Schema: map[string]*schema.Schema{
 			"organization": {
-				Description: "Name of the enterprise. [Check your enterprises](https://deploygate.com/enterprises)",
+				Description: "Name of the organization. [Check your organizations](https://deploygate.com/organizations)",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"members": {
-				Description: "Data of the enterprise users.",
+				Description: "Data of the organization users.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem: &schema.Resource{
