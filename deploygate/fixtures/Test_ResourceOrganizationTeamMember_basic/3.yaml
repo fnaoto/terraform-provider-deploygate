@@ -1,0 +1,41 @@
+---
+version: 1
+interactions:
+- request:
+    body: user=naoto-fukuda
+    form:
+      user:
+      - naoto-fukuda
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - GoDeployGate (+github.com/fnaoto/go_deploygate; go1.17.11)
+    url: https://deploygate.com/api/organizations/test-organization-fnaoto/teams/admin/users
+    method: POST
+  response:
+    body: '{"error":false,"results":"naoto-fukuda has been added to admin"}'
+    headers: {}
+    status: 201 Created
+    code: 201
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - GoDeployGate (+github.com/fnaoto/go_deploygate; go1.17.11)
+    url: https://deploygate.com/api/organizations/test-organization-fnaoto/teams/admin/users
+    method: GET
+  response:
+    body: '{"error":false,"users":[{"type":"User","name":"naoto-fukuda","icon_url":"https://secure.gravatar.com/avatar/77329ff2f492bb519f6f11a7bd27d568?s=218\u0026d=mm","url":"https://deploygate.com/users/naoto-fukuda"}]}'
+    headers: {}
+    status: 200 OK
+    code: 200
+    duration: ""

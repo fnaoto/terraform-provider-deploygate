@@ -1,13 +1,3 @@
-# Variables
-
-variable "organization" {
-  type = string
-}
-
-variable "add_member_name" {
-  type = string
-}
-
 # Data
 
 data "deploygate_organization_member" "current" {
@@ -23,6 +13,10 @@ resource "deploygate_organization_member" "current" {
   members {
     name = var.add_member_name
   }
+
+  depends_on = [
+    deploygate_enterprise_member.current
+  ]
 }
 
 # Output

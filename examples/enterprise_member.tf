@@ -1,13 +1,3 @@
-# Variables
-
-variable "enterprise" {
-  type = string
-}
-
-variable "add_member_name" {
-  type = string
-}
-
 # Data
 
 data "deploygate_enterprise_member" "current" {

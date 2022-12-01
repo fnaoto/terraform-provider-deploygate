@@ -1,0 +1,21 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - GoDeployGate (+github.com/fnaoto/go_deploygate; go1.17.11)
+    url: https://deploygate.com/api/organizations/test-organization-fnaoto/teams/admin/users/naoto-fukuda
+    method: DELETE
+  response:
+    body: '{"error":false,"message":"naoto-fukuda was removed from admin(test-organization-fnaoto)"}'
+    headers: {}
+    status: 200 OK
+    code: 200
+    duration: ""
