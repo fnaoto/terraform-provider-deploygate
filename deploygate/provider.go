@@ -18,12 +18,14 @@ func Provider() *schema.Provider {
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"deploygate_organization_member": dataSourceOrganizationMember(),
-			"deploygate_enterprise_member":   dataSourceEnterpriseMember(),
+			"deploygate_organization_team_member": dataSourceOrganizationTeamMember(),
+			"deploygate_organization_member":      dataSourceOrganizationMember(),
+			"deploygate_enterprise_member":        dataSourceEnterpriseMember(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"deploygate_organization_member": resourceOrganizationMember(),
-			"deploygate_enterprise_member":   resourceEnterpriseMember(),
+			"deploygate_organization_team_member": resourceOrganizationTeamMember(),
+			"deploygate_organization_member":      resourceOrganizationMember(),
+			"deploygate_enterprise_member":        resourceEnterpriseMember(),
 		},
 	}
 
