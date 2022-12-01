@@ -41,6 +41,10 @@ func resourceTestOrganizationTeamMember(n string) resource.TestCheckFunc {
 			return fmt.Errorf("team expected to not be nil")
 		}
 
+		if rs.Primary.Attributes["users"] == "" {
+			return fmt.Errorf("users expected to not be nil")
+		}
+
 		return nil
 	}
 }
@@ -58,7 +62,7 @@ resource "deploygate_organization_team_member" "current" {
   organization = var.organization
 	team 				 = var.team
 
-  members {
+  users {
     name = var.add_member_name
   }
 }

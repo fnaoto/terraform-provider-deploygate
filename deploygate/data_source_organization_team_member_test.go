@@ -56,7 +56,7 @@ variable "organization_api_key" {
 
 data "deploygate_organization_team_member" "current" {
 	organization = var.organization
-	team = var.team
+	team 				 = var.team
 }
 
 variable "organization" {
