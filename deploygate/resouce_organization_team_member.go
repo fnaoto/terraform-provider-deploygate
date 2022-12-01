@@ -1,6 +1,7 @@
 package deploygate
 
 import (
+	"fmt"
 	"log"
 
 	go_deploygate "github.com/fnaoto/go_deploygate"
@@ -68,7 +69,7 @@ func resourceOrganizationTeamMemberRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	d.SetId(cfg.Organization)
+	d.SetId(fmt.Sprintf("%s/%s", cfg.Organization, cfg.Team))
 	d.Set("users", resp.Users)
 
 	return nil
@@ -90,7 +91,7 @@ func resourceOrganizationTeamMemberCreate(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	d.SetId(cfg.Organization)
+	d.SetId(fmt.Sprintf("%s/%s", cfg.Organization, cfg.Team))
 	d.Set("users", resp.Users)
 
 	return nil
@@ -120,7 +121,7 @@ func resourceOrganizationTeamMemberUpdate(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	d.SetId(cfg.Organization)
+	d.SetId(fmt.Sprintf("%s/%s", cfg.Organization, cfg.Team))
 	d.Set("users", resp.Users)
 
 	return nil
