@@ -2,7 +2,7 @@ TEST?=$$(go list ./... | grep -v 'vendor')
 NAME=deploygate
 BINARY=terraform-provider-${NAME}
 VERSION=0.1
-OS_ARCH=darwin_amd64
+OS_ARCH?=darwin_amd64
 EXAMPLES=examples
 
 default: install
@@ -41,3 +41,8 @@ examples: install
 	terraform plan $(EXAMPLES)
 	terraform apply $(EXAMPLES)
 	terraform destroy $(EXAMPLES)
+
+docs:
+	go generate ./...
+
+.PHONY: docs examples testacc test install build release
