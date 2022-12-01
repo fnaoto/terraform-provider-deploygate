@@ -9,36 +9,43 @@ import (
 
 func resourceOrganizationMember() *schema.Resource {
 	return &schema.Resource{
-		Read:   resourceOrganizationMemberRead,
-		Create: resourceOrganizationMemberCreate,
-		Update: resourceOrganizationMemberUpdate,
-		Delete: resourceOrganizationMemberDelete,
+		Description: "Manages a organization member resource.",
+		Read:        resourceOrganizationMemberRead,
+		Create:      resourceOrganizationMemberCreate,
+		Update:      resourceOrganizationMemberUpdate,
+		Delete:      resourceOrganizationMemberDelete,
 
 		Schema: map[string]*schema.Schema{
 			"organization": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Name of the organization. [Check your organizations](https://deploygate.com/organizations)",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"members": {
-				Type:     schema.TypeSet,
-				Required: true,
+				Description: "Data of the organization members.",
+				Type:        schema.TypeSet,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "Type of the user that is user or tester.",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"url": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "Name of the user",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"icon_url": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "Icon URL for user profile.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"url": {
+							Description: "URL of the user account.",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 					},
 				},

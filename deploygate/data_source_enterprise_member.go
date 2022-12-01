@@ -10,52 +10,39 @@ import (
 
 func dataSourceEnterpriseMember() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceEnterpriseMemberRead,
+		Description: "Retrieves informantion about a existing enterprise member.",
+		Read:        dataSourceEnterpriseMemberRead,
 		Schema: map[string]*schema.Schema{
 			"enterprise": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Name of the enterprise. [Check your enterprises](https://deploygate.com/enterprises)",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"users": {
-				Type:     schema.TypeSet,
-				Computed: true,
+				Description: "Data of the enterprise users.",
+				Type:        schema.TypeSet,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "Type of the user that is user or tester.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "Name of the user",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"icon_url": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "Icon URL for user profile.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"url": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"full_name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"email": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"role": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"created_at": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"last_access_at": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "URL of the user account.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
@@ -71,18 +58,20 @@ func dataSourceEnterpriseMemberRead(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] dataSourceEnterpriseMemberRead: %s", enterprise)
 
-	e := &go_deploygate.ListEnterpriseMembersRequest{
+	req := &go_deploygate.ListEnterpriseMembersRequest{
 		Enterprise: enterprise,
 	}
 
-	rs, err := client.ListEnterpriseMembers(e)
+	resp, err := client.ListEnterpriseMembers(req)
 
 	if err != nil {
 		return err
 	}
 
+	users := converEnterpriseMemberToMember(resp.Users)
+
 	d.SetId(fmt.Sprintf("%s", enterprise))
-	d.Set("users", rs.Users)
+	d.Set("users", users)
 
 	return nil
 }

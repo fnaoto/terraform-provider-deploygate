@@ -10,33 +10,40 @@ import (
 
 func dataSourceOrganizationMember() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceOrganizationMemberRead,
+		Description: "Retrieves informantion about a existing enterprise member.",
+		Read:        dataSourceOrganizationMemberRead,
 
 		Schema: map[string]*schema.Schema{
 			"organization": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Name of the enterprise. [Check your enterprises](https://deploygate.com/enterprises)",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"members": {
-				Type:     schema.TypeSet,
-				Computed: true,
+				Description: "Data of the enterprise users.",
+				Type:        schema.TypeSet,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "Type of the user that is user or tester.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"url": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "Name of the user",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"icon_url": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "Icon URL for user profile.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"url": {
+							Description: "URL of the user account.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
