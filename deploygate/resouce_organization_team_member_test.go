@@ -56,7 +56,8 @@ variable "organization_api_key" {
 
 resource "deploygate_organization_team_member" "current" {
   organization = var.organization
-	team = var.team
+	team 				 = var.team
+
   members {
     name = var.add_member_name
   }
