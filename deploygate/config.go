@@ -19,3 +19,19 @@ func (cfg *Config) initClient() error {
 	}
 	return nil
 }
+
+func converEnterpriseMemberToMember(members []go_deploygate.EnterpriseMember) []go_deploygate.Member {
+	var users []go_deploygate.Member
+
+	for _, member := range members {
+		user := go_deploygate.Member{
+			Type:    member.Type,
+			Name:    member.Name,
+			IconUrl: member.IconUrl,
+			Url:     member.Url,
+		}
+		users = append(users, user)
+	}
+
+	return users
+}

@@ -10,40 +10,48 @@ import (
 
 func resourceOrganizationTeamMember() *schema.Resource {
 	return &schema.Resource{
-		Read:   resourceOrganizationTeamMemberRead,
-		Create: resourceOrganizationTeamMemberCreate,
-		Update: resourceOrganizationTeamMemberUpdate,
-		Delete: resourceOrganizationTeamMemberDelete,
+		Description: "Manages a organization member resource.",
+		Read:        resourceOrganizationTeamMemberRead,
+		Create:      resourceOrganizationTeamMemberCreate,
+		Update:      resourceOrganizationTeamMemberUpdate,
+		Delete:      resourceOrganizationTeamMemberDelete,
 
 		Schema: map[string]*schema.Schema{
 			"organization": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Name of the organization. [Check your organizations](https://deploygate.com/organizations)",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"team": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Name of the team in organization.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"users": {
-				Type:     schema.TypeSet,
-				Required: true,
+				Description: "Data of the organization team users.",
+				Type:        schema.TypeSet,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "Type of the user that is user or tester.",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"url": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "Name of the user",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"icon_url": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "Icon URL for user profile.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"url": {
+							Description: "URL of the user account.",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 					},
 				},

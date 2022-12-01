@@ -52,7 +52,8 @@ variable "enterprise_api_key" {
 
 resource "deploygate_enterprise_member" "current" {
   enterprise = var.enterprise
-  members {
+
+  users {
     name = var.add_member_name
   }
 }

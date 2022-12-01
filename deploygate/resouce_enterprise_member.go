@@ -9,6 +9,8 @@ import (
 
 func resourceEnterpriseMember() *schema.Resource {
 	return &schema.Resource{
+		Description: "Manages a enterprise member resource.",
+
 		Read:   resourceEnterpriseMemberRead,
 		Create: resourceEnterpriseMemberCreate,
 		Update: resourceEnterpriseMemberUpdate,
@@ -16,49 +18,35 @@ func resourceEnterpriseMember() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"enterprise": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Name of the enterprise. [Check your enterprises](https://deploygate.com/enterprises)",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
-			"members": {
-				Type:     schema.TypeSet,
-				Required: true,
+			"users": {
+				Description: "Data of the enterprise users.",
+				Type:        schema.TypeSet,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "Type of the user that is user or tester.",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "Name of the user",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"icon_url": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "Icon URL for user profile.",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"url": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"full_name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"email": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"role": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"created_at": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"last_access_at": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "URL of the user account.",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 					},
 				},
@@ -70,21 +58,23 @@ func resourceEnterpriseMember() *schema.Resource {
 // EnterpriseMemberConfig is config for go-deploygate
 type EnterpriseMemberConfig struct {
 	Enterprise string
-	Members    []*go_deploygate.EnterpriseMember
+	Users      []*go_deploygate.Member
 }
 
 func resourceEnterpriseMemberRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] resourceEnterpriseMemberRead")
 
 	cfg := setEnterpriseMemberConfig(d)
-	rs, err := meta.(*Config).listEnterpriseMembers(cfg)
+	resp, err := meta.(*Config).listEnterpriseMembers(cfg)
 
 	if err != nil {
 		return err
 	}
 
+	users := converEnterpriseMemberToMember(resp.Users)
+
 	d.SetId(cfg.Enterprise)
-	d.Set("members", rs.Users)
+	d.Set("users", users)
 
 	return nil
 }
@@ -99,14 +89,16 @@ func resourceEnterpriseMemberCreate(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
-	rs, err := meta.(*Config).listEnterpriseMembers(cfg)
+	resp, err := meta.(*Config).listEnterpriseMembers(cfg)
 
 	if err != nil {
 		return err
 	}
 
+	users := converEnterpriseMemberToMember(resp.Users)
+
 	d.SetId(cfg.Enterprise)
-	d.Set("members", rs.Users)
+	d.Set("users", users)
 
 	return nil
 }
@@ -127,14 +119,16 @@ func resourceEnterpriseMemberUpdate(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
-	rs, err := meta.(*Config).listEnterpriseMembers(cfg)
+	resp, err := meta.(*Config).listEnterpriseMembers(cfg)
 
 	if err != nil {
 		return err
 	}
 
+	users := converEnterpriseMemberToMember(resp.Users)
+
 	d.SetId(cfg.Enterprise)
-	d.Set("members", rs.Users)
+	d.Set("users", users)
 
 	return nil
 }
@@ -155,38 +149,38 @@ func resourceEnterpriseMemberDelete(d *schema.ResourceData, meta interface{}) er
 }
 
 func (c *Config) listEnterpriseMembers(cfg *EnterpriseMemberConfig) (*go_deploygate.ListEnterpriseMembersResponse, error) {
-	g := &go_deploygate.ListEnterpriseMembersRequest{
+	req := &go_deploygate.ListEnterpriseMembersRequest{
 		Enterprise: cfg.Enterprise,
 	}
 
 	log.Printf("[DEBUG] listEnterpriseMembers: %s", cfg.Enterprise)
 
-	rs, err := c.client.ListEnterpriseMembers(g)
+	resp, err := c.client.ListEnterpriseMembers(req)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var members []go_deploygate.EnterpriseMember
+	var users []go_deploygate.EnterpriseMember
 
-	for _, c := range cfg.Members {
-		for _, u := range rs.Users {
-			if c.Name == u.Name {
-				members = append(members, u)
+	for _, c := range cfg.Users {
+		for _, user := range resp.Users {
+			if c.Name == user.Name {
+				users = append(users, user)
 			}
 		}
 	}
 
-	rs.Users = members
+	resp.Users = users
 
-	return rs, nil
+	return resp, nil
 }
 
 func (c *Config) addEnterpriseMember(cfg *EnterpriseMemberConfig) error {
-	for _, member := range cfg.Members {
+	for _, user := range cfg.Users {
 		g := &go_deploygate.AddEnterpriseMemberRequest{
 			Enterprise: cfg.Enterprise,
-			User:       member.Name,
+			User:       user.Name,
 		}
 
 		_, err := c.client.AddEnterpriseMember(g)
@@ -199,13 +193,13 @@ func (c *Config) addEnterpriseMember(cfg *EnterpriseMemberConfig) error {
 }
 
 func (c *Config) deleteEnterpriseMember(cfg *EnterpriseMemberConfig) error {
-	for _, member := range cfg.Members {
-		g := &go_deploygate.RemoveEnterpriseMemberRequest{
+	for _, user := range cfg.Users {
+		req := &go_deploygate.RemoveEnterpriseMemberRequest{
 			Enterprise: cfg.Enterprise,
-			User:       member.Name,
+			User:       user.Name,
 		}
 
-		_, err := c.client.RemoveEnterpriseMember(g)
+		_, err := c.client.RemoveEnterpriseMember(req)
 
 		if err != nil {
 			return err
@@ -215,12 +209,12 @@ func (c *Config) deleteEnterpriseMember(cfg *EnterpriseMemberConfig) error {
 }
 
 func setEnterpriseMemberConfig(d *schema.ResourceData) *EnterpriseMemberConfig {
-	var members []*go_deploygate.EnterpriseMember
+	var users []*go_deploygate.Member
 
-	if v, ok := d.GetOk("members"); ok {
+	if v, ok := d.GetOk("users"); ok {
 		for _, element := range v.(*schema.Set).List() {
 			elem := element.(map[string]interface{})
-			members = append(members, &go_deploygate.EnterpriseMember{
+			users = append(users, &go_deploygate.Member{
 				Type:    elem["type"].(string),
 				Name:    elem["name"].(string),
 				IconUrl: elem["icon_url"].(string),
@@ -231,6 +225,6 @@ func setEnterpriseMemberConfig(d *schema.ResourceData) *EnterpriseMemberConfig {
 
 	return &EnterpriseMemberConfig{
 		Enterprise: d.Get("enterprise").(string),
-		Members:    members,
+		Users:      users,
 	}
 }
