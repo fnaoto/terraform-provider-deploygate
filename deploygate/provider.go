@@ -49,6 +49,6 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			return nil, diag.FromErr(err)
 		}
 
-		return config.client, nil
+		return config, nil
 	}
 }
