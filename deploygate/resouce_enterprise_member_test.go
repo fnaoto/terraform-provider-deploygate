@@ -43,26 +43,14 @@ func resourceTestEnterpriseMember(n string) resource.TestCheckFunc {
 
 const resourceTestEnterpriseMemberConfig = `
 provider "deploygate" {
-	api_key = var.enterprise_api_key
-}
-
-variable "enterprise_api_key" {
-  type = string
+	api_key = "enterprise_api_key"
 }
 
 resource "deploygate_enterprise_member" "current" {
-  enterprise = var.enterprise
+  enterprise = "test-enterprise-fnaoto"
 
   users {
-    name = var.add_member_name
+    name = "naoto-fukuda"
   }
-}
-
-variable "enterprise" {
-  type = string
-}
-
-variable "add_member_name" {
-  type = string
 }
 `

@@ -43,18 +43,10 @@ func testDataSourceEnterpriseMember(n string) resource.TestCheckFunc {
 
 const testDataSourceEnterpriseMemberConfig = `
 provider "deploygate" {
-	api_key = var.enterprise_api_key
-}
-
-variable "enterprise_api_key" {
-  type = string
+	api_key = "enterprise_api_key"
 }
 
 data "deploygate_enterprise_member" "current" {
-	enterprise = var.enterprise
-}
-
-variable "enterprise" {
-  type = string
+	enterprise = "test-enterprise-fnaoto"
 }
 `
