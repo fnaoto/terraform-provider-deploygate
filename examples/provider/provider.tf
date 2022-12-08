@@ -27,3 +27,9 @@ provider "deploygate" {
 variable "enterprise_api_key" {
   type = string
 }
+
+# Provider via environment variable which DG_API_KEY
+#
+## export DG_API_KEY="< api_key >"
+
+provider "deploygate" {}
