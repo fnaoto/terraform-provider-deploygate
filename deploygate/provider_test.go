@@ -11,6 +11,7 @@ import (
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/dnaeon/go-vcr/recorder"
 	go_deploygate "github.com/fnaoto/go_deploygate"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -51,7 +52,7 @@ func Test_DGPreCheck(t *testing.T) {
 
 func initProvider(t *testing.T) map[string]*schema.Provider {
 	testDGProvider = Provider()
-	testDGProvider.ConfigureFunc = providerConfigureVCR(testDGProvider, t)
+	testDGProvider.ConfigureContextFunc = providerConfigureVCR(testDGProvider, t)
 
 	testDGProviders = map[string]*schema.Provider{
 		ProviderNameDG: testDGProvider,
@@ -60,8 +61,8 @@ func initProvider(t *testing.T) map[string]*schema.Provider {
 	return testDGProviders
 }
 
-func providerConfigureVCR(p *schema.Provider, t *testing.T) schema.ConfigureFunc {
-	return func(d *schema.ResourceData) (interface{}, error) {
+func providerConfigureVCR(p *schema.Provider, t *testing.T) schema.ConfigureContextFunc {
+	return func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		config := &Config{
 			clientConfig: go_deploygate.ClientConfig{
 				ApiKey: d.Get("api_key").(string),
@@ -70,14 +71,14 @@ func providerConfigureVCR(p *schema.Provider, t *testing.T) schema.ConfigureFunc
 
 		err := config.initClient()
 		if err != nil {
-			return nil, err
+			return nil, diag.FromErr(err)
 		}
 
 		fixture := filepath.Join(FixtureBasePath, t.Name(), strconv.Itoa(len(testDGConfigs)))
 
 		rec, err := recorder.New(fixture)
 		if err != nil {
-			return nil, err
+			return nil, diag.FromErr(err)
 		}
 
 		rec.AddSaveFilter(func(i *cassette.Interaction) error {

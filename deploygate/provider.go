@@ -1,7 +1,10 @@
 package deploygate
 
 import (
+	"context"
+
 	go_deploygate "github.com/fnaoto/go_deploygate"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -29,12 +32,12 @@ func Provider() *schema.Provider {
 		},
 	}
 
-	p.ConfigureFunc = providerConfigure(p)
+	p.ConfigureContextFunc = providerConfigure(p)
 	return p
 }
 
-func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
-	return func(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
+	return func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		config := Config{
 			clientConfig: go_deploygate.ClientConfig{
 				ApiKey: d.Get("api_key").(string),
@@ -43,7 +46,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 
 		err := config.initClient()
 		if err != nil {
-			return nil, err
+			return nil, diag.FromErr(err)
 		}
 
 		return config.client, nil
