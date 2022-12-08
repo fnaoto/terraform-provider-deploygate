@@ -1,4 +1,3 @@
-
 provider "deploygate" {
   alias   = "organization"
   api_key = var.organization_api_key
