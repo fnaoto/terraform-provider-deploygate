@@ -38,17 +38,22 @@ func Provider() *schema.Provider {
 
 func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 	return func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		config := &Config{
-			clientConfig: go_deploygate.ClientConfig{
-				ApiKey: d.Get("api_key").(string),
-			},
-		}
-
-		err := config.initClient()
-		if err != nil {
-			return nil, diag.FromErr(err)
-		}
-
-		return config, nil
+		config, err := initConfig(d)
+		return config, diag.FromErr(err)
 	}
+}
+
+func initConfig(d *schema.ResourceData) (*Config, error) {
+	config := &Config{
+		clientConfig: go_deploygate.ClientConfig{
+			ApiKey: d.Get("api_key").(string),
+		},
+	}
+
+	err := config.initClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return config, nil
 }
