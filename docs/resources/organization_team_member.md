@@ -34,6 +34,15 @@ variable "add_member_name" {
   type = string
 }
 
+resource "deploygate_organization_member" "current" {
+  provider     = deploygate.organization
+  organization = var.organization
+
+  members {
+    name = var.add_member_name
+  }
+}
+
 resource "deploygate_organization_team_member" "current" {
   provider     = deploygate.organization
   organization = var.organization
@@ -42,6 +51,10 @@ resource "deploygate_organization_team_member" "current" {
   users {
     name = var.add_member_name
   }
+
+  depends_on = [
+    deploygate_organization_member.current
+  ]
 }
 ```
 
