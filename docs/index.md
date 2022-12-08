@@ -21,6 +21,8 @@ terraform {
   }
 }
 
+# Provider for organization api key
+
 provider "deploygate" {
   alias   = "organization"
   api_key = var.organization_api_key
@@ -29,6 +31,8 @@ provider "deploygate" {
 variable "organization_api_key" {
   type = string
 }
+
+# Provider for enterprise api key
 
 provider "deploygate" {
   alias   = "enterprise"
