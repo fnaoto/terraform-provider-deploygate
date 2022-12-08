@@ -38,7 +38,7 @@ func Provider() *schema.Provider {
 
 func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 	return func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		config := Config{
+		config := &Config{
 			clientConfig: go_deploygate.ClientConfig{
 				ApiKey: d.Get("api_key").(string),
 			},
