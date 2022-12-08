@@ -11,13 +11,14 @@ build:
 install: build
 	mkdir -p $(PROVIDER_DIR)
 	mv ${BINARY} $(PROVIDER_DIR)
-	cp .terraformrc ~
 
 test:
 	go test -v $(TESTARGS) -cover -timeout=120s -parallel=4 ./...
 
 testacc: install
+	cp .terraformrc ~
 	TF_ACC=1 go test -v $(TESTARGS) -cover -timeout 120m ./...
+	rm ~/.terraformrc
 
 docs:
 	go generate ./...

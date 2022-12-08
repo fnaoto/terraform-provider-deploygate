@@ -10,7 +10,6 @@ import (
 
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/dnaeon/go-vcr/recorder"
-	go_deploygate "github.com/fnaoto/go_deploygate"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -63,13 +62,8 @@ func initProvider(t *testing.T) map[string]*schema.Provider {
 
 func providerConfigureVCR(p *schema.Provider, t *testing.T) schema.ConfigureContextFunc {
 	return func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		config := &Config{
-			clientConfig: go_deploygate.ClientConfig{
-				ApiKey: d.Get("api_key").(string),
-			},
-		}
+		config, err := initConfig(d)
 
-		err := config.initClient()
 		if err != nil {
 			return nil, diag.FromErr(err)
 		}
