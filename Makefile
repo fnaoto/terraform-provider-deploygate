@@ -6,7 +6,7 @@ build:
 	@go mod download
 	@go build -v .
 
-install:
+install: build
 	@go install -v .
 	@mv terraform-provider-deploygate /tmp
 
