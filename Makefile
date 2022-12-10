@@ -1,4 +1,5 @@
 CHDIR?=$$(ls -d examples/*/* | grep -v ".tf")
+TF_LOG?=WARN
 
 default: install
 
@@ -19,9 +20,9 @@ testacc: install
 docs:
 	@go generate ./...
 
-terraform:
+terraform: install
 	@for dir in $(CHDIR); do \
-		TF_CLI_CONFIG_FILE=.terrformrc terraform -chdir=$$dir $(COMMAND); \
+		TF_LOG=$(TF_LOG) TF_CLI_CONFIG_FILE=.terrformrc terraform -chdir=$$dir $(COMMAND); \
 	done
 
 plan:
