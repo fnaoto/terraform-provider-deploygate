@@ -1,17 +1,20 @@
 package deploygate
 
 import (
+	"context"
 	"fmt"
 	"log"
 
 	go_deploygate "github.com/fnaoto/go_deploygate"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceEnterpriseMember() *schema.Resource {
 	return &schema.Resource{
 		Description: "Retrieves informantion about a existing enterprise member.",
-		Read:        dataSourceEnterpriseMemberRead,
+		ReadContext: dataSourceEnterpriseMemberRead,
+
 		Schema: map[string]*schema.Schema{
 			"enterprise": {
 				Description: "Name of the enterprise. [Check your enterprises](https://deploygate.com/enterprises)",
@@ -51,7 +54,7 @@ func dataSourceEnterpriseMember() *schema.Resource {
 	}
 }
 
-func dataSourceEnterpriseMemberRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceEnterpriseMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*Config).client
 
 	enterprise := d.Get("enterprise").(string)
@@ -65,7 +68,7 @@ func dataSourceEnterpriseMemberRead(d *schema.ResourceData, meta interface{}) er
 	resp, err := client.ListEnterpriseMembers(req)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	users := converEnterpriseMemberToMember(resp.Users)

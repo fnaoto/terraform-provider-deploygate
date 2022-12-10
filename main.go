@@ -18,7 +18,7 @@ func main() {
 	opts := &plugin.ServeOpts{
 		Debug:        debugMode,
 		ProviderAddr: "registry.terraform.io/fnaoto/deploygate",
-		ProviderFunc: deploygate.Provider,
+		ProviderFunc: deploygate.Provider(),
 	}
 
 	plugin.Serve(opts)

@@ -1,21 +1,22 @@
 package deploygate
 
 import (
+	"context"
 	"fmt"
 	"log"
 
 	go_deploygate "github.com/fnaoto/go_deploygate"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceEnterpriseOrganizationMember() *schema.Resource {
 	return &schema.Resource{
-		Description: "Manages a enterprise organization member resource.",
-
-		Read:   resourceEnterpriseOrganizationMemberRead,
-		Create: resourceEnterpriseOrganizationMemberCreate,
-		Update: resourceEnterpriseOrganizationMemberUpdate,
-		Delete: resourceEnterpriseOrganizationMemberDelete,
+		Description:   "Manages a enterprise organization member resource.",
+		ReadContext:   resourceEnterpriseOrganizationMemberRead,
+		CreateContext: resourceEnterpriseOrganizationMemberCreate,
+		UpdateContext: resourceEnterpriseOrganizationMemberUpdate,
+		DeleteContext: resourceEnterpriseOrganizationMemberDelete,
 
 		Schema: map[string]*schema.Schema{
 			"enterprise": {
@@ -68,14 +69,14 @@ type EnterpriseOrganizationMemberConfig struct {
 	Users        []*go_deploygate.Member
 }
 
-func resourceEnterpriseOrganizationMemberRead(d *schema.ResourceData, meta interface{}) error {
+func resourceEnterpriseOrganizationMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] resourceEnterpriseOrganizationMemberRead")
 
 	cfg := setEnterpriseOrganizationMemberConfig(d)
 	resp, err := meta.(*Config).listEnterpriseOrganizationMembers(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	users := resp.Users
@@ -86,20 +87,20 @@ func resourceEnterpriseOrganizationMemberRead(d *schema.ResourceData, meta inter
 	return nil
 }
 
-func resourceEnterpriseOrganizationMemberCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceEnterpriseOrganizationMemberCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] resourceEnterpriseOrganizationMemberCreate")
 
 	cfg := setEnterpriseOrganizationMemberConfig(d)
 	err := meta.(*Config).addEnterpriseOrganizationMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resp, err := meta.(*Config).listEnterpriseOrganizationMembers(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	users := resp.Users
@@ -110,26 +111,26 @@ func resourceEnterpriseOrganizationMemberCreate(d *schema.ResourceData, meta int
 	return nil
 }
 
-func resourceEnterpriseOrganizationMemberUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceEnterpriseOrganizationMemberUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] resourceEnterpriseOrganizationMemberUpdate")
 
 	cfg := setEnterpriseOrganizationMemberConfig(d)
 	err := meta.(*Config).deleteEnterpriseOrganizationMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = meta.(*Config).addEnterpriseOrganizationMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resp, err := meta.(*Config).listEnterpriseOrganizationMembers(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	users := resp.Users
@@ -140,14 +141,14 @@ func resourceEnterpriseOrganizationMemberUpdate(d *schema.ResourceData, meta int
 	return nil
 }
 
-func resourceEnterpriseOrganizationMemberDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceEnterpriseOrganizationMemberDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] resourceEnterpriseOrganizationMemberDelete")
 
 	cfg := setEnterpriseOrganizationMemberConfig(d)
 	err := meta.(*Config).deleteEnterpriseOrganizationMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")

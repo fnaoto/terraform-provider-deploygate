@@ -1,20 +1,22 @@
 package deploygate
 
 import (
+	"context"
 	"fmt"
 	"log"
 
 	go_deploygate "github.com/fnaoto/go_deploygate"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceOrganizationTeamMember() *schema.Resource {
 	return &schema.Resource{
-		Description: "Manages a organization member resource.",
-		Read:        resourceOrganizationTeamMemberRead,
-		Create:      resourceOrganizationTeamMemberCreate,
-		Update:      resourceOrganizationTeamMemberUpdate,
-		Delete:      resourceOrganizationTeamMemberDelete,
+		Description:   "Manages a organization member resource.",
+		ReadContext:   resourceOrganizationTeamMemberRead,
+		CreateContext: resourceOrganizationTeamMemberCreate,
+		UpdateContext: resourceOrganizationTeamMemberUpdate,
+		DeleteContext: resourceOrganizationTeamMemberDelete,
 
 		Schema: map[string]*schema.Schema{
 			"organization": {
@@ -67,14 +69,14 @@ type OrganizationTeamMemberConfig struct {
 	Users        []*go_deploygate.Member
 }
 
-func resourceOrganizationTeamMemberRead(d *schema.ResourceData, meta interface{}) error {
+func resourceOrganizationTeamMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] resourceOrganizationTeamMemberRead %#v", d)
 
 	cfg := setOrganizationTeamMemberConfig(d)
 	resp, err := meta.(*Config).getOrganizationTeamMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%s/%s", cfg.Organization, cfg.Team))
@@ -83,20 +85,20 @@ func resourceOrganizationTeamMemberRead(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceOrganizationTeamMemberCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceOrganizationTeamMemberCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] resourceOrganizationTeamMemberCreate %#v", d)
 
 	cfg := setOrganizationTeamMemberConfig(d)
 	err := meta.(*Config).addOrganizationTeamMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resp, err := meta.(*Config).getOrganizationTeamMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%s/%s", cfg.Organization, cfg.Team))
@@ -105,7 +107,7 @@ func resourceOrganizationTeamMemberCreate(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func resourceOrganizationTeamMemberUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceOrganizationTeamMemberUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] resourceOrganizationTeamMemberUpdate %#v", d)
 
 	var err error
@@ -114,19 +116,19 @@ func resourceOrganizationTeamMemberUpdate(d *schema.ResourceData, meta interface
 	err = meta.(*Config).deleteOrganizationTeamMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = meta.(*Config).addOrganizationTeamMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resp, err := meta.(*Config).getOrganizationTeamMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%s/%s", cfg.Organization, cfg.Team))
@@ -135,14 +137,14 @@ func resourceOrganizationTeamMemberUpdate(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func resourceOrganizationTeamMemberDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceOrganizationTeamMemberDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] resourceOrganizationTeamMemberDelete %#v", d)
 
 	cfg := setOrganizationTeamMemberConfig(d)
 	err := meta.(*Config).deleteOrganizationTeamMember(cfg)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")
