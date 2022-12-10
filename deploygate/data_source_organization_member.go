@@ -1,17 +1,19 @@
 package deploygate
 
 import (
+	"context"
 	"fmt"
 	"log"
 
 	go_deploygate "github.com/fnaoto/go_deploygate"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceOrganizationMember() *schema.Resource {
 	return &schema.Resource{
 		Description: "Retrieves informantion about a existing organization member.",
-		Read:        dataSourceOrganizationMemberRead,
+		ReadContext: dataSourceOrganizationMemberRead,
 
 		Schema: map[string]*schema.Schema{
 			"organization": {
@@ -52,27 +54,25 @@ func dataSourceOrganizationMember() *schema.Resource {
 	}
 }
 
-func dataSourceOrganizationMemberRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceOrganizationMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*Config).client
 
 	organization := d.Get("organization").(string)
 
 	log.Printf("[DEBUG] dataSourceOrganizationMemberRead: %s", organization)
 
-	g := &go_deploygate.ListOrganizationMembersRequest{
+	req := &go_deploygate.ListOrganizationMembersRequest{
 		Organization: organization,
 	}
 
-	om, err := client.ListOrganizationMembers(g)
+	resp, err := client.ListOrganizationMembers(req)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	rs := om
-
 	d.SetId(fmt.Sprintf("%s", organization))
-	d.Set("members", rs.Members)
+	d.Set("members", resp.Members)
 
 	return nil
 }

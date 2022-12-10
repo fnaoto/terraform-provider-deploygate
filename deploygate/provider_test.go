@@ -27,7 +27,6 @@ var testDGProviders map[string]*schema.Provider
 var testDGConfigs map[string]*Config
 
 func Test_DGPreCheck(t *testing.T) {
-	initProvider(t)
 	// Test for config
 	configRaw := map[string]interface{}{
 		"api_key": "dummy",
@@ -47,17 +46,6 @@ func Test_DGPreCheck(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-}
-
-func initProvider(t *testing.T) map[string]*schema.Provider {
-	testDGProvider = Provider()
-	testDGProvider.ConfigureContextFunc = providerConfigureVCR(testDGProvider, t)
-
-	testDGProviders = map[string]*schema.Provider{
-		ProviderNameDG: testDGProvider,
-	}
-
-	return testDGProviders
 }
 
 func providerConfigureVCR(p *schema.Provider, t *testing.T) schema.ConfigureContextFunc {
@@ -100,9 +88,15 @@ func closeVCR(t *testing.T) {
 
 func testWithVCR(t *testing.T, c resource.TestCase) {
 	testDGConfigs = make(map[string]*Config)
-
-	providers := initProvider(t)
-	c.Providers = providers
+	testDGProvider = Provider()()
+	testDGProvider.ConfigureContextFunc = providerConfigureVCR(testDGProvider, t)
+	c.ProviderFactories = map[string]func() (*schema.Provider, error){
+		ProviderNameDG: func() (*schema.Provider, error) {
+			return testDGProvider, nil
+		},
+	}
 	defer closeVCR(t)
-	resource.Test(t, c)
+	// FIXME: Fix InvalidIfaceAssign
+	// (variable of type *"testing".T) as "github.com/mitchellh/go-testing-interface".T value
+	resource.UnitTest(t, c)
 }

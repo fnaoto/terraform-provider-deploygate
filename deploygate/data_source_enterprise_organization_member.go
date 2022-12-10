@@ -10,14 +10,19 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceEnterpriseMember() *schema.Resource {
+func dataSourceEnterpriseOrganizationMember() *schema.Resource {
 	return &schema.Resource{
-		Description: "Retrieves informantion about a existing enterprise member.",
-		ReadContext: dataSourceEnterpriseMemberRead,
+		Description: "Retrieves informantion about a existing enterprise organization member.",
+		ReadContext: dataSourceEnterpriseOrganizationMemberRead,
 
 		Schema: map[string]*schema.Schema{
 			"enterprise": {
 				Description: "Name of the enterprise. [Check your enterprises](https://deploygate.com/enterprises)",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"organization": {
+				Description: "Name of the organization in enterprise. [Check your enterprises](https://deploygate.com/enterprises)",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -54,27 +59,27 @@ func dataSourceEnterpriseMember() *schema.Resource {
 	}
 }
 
-func dataSourceEnterpriseMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceEnterpriseOrganizationMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*Config).client
 
 	enterprise := d.Get("enterprise").(string)
+	organization := d.Get("organization").(string)
 
-	log.Printf("[DEBUG] dataSourceEnterpriseMemberRead: %s", enterprise)
+	log.Printf("[DEBUG] dataSourceEnterpriseOrganizationMemberRead: %s,%s", enterprise, organization)
 
-	req := &go_deploygate.ListEnterpriseMembersRequest{
-		Enterprise: enterprise,
+	req := &go_deploygate.ListEnterpriseOrganizationMembersRequest{
+		Enterprise:   enterprise,
+		Organization: organization,
 	}
 
-	resp, err := client.ListEnterpriseMembers(req)
+	resp, err := client.ListEnterpriseOrganizationMembers(req)
 
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	users := converEnterpriseMemberToMember(resp.Users)
-
-	d.SetId(fmt.Sprintf("%s", enterprise))
-	d.Set("users", users)
+	d.SetId(fmt.Sprintf("%s/%s", enterprise, organization))
+	d.Set("users", resp.Users)
 
 	return nil
 }

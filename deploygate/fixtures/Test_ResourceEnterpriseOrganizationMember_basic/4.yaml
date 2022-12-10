@@ -1,0 +1,21 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - GoDeployGate (+github.com/fnaoto/go_deploygate; go1.17.11)
+    url: https://deploygate.com/api/enterprises/test-enterprise-fnaoto/organizations/test-organization-fnaoto/users
+    method: GET
+  response:
+    body: '{"error":false,"users":[{"type":"User","name":"naoto-fukuda-test","icon_url":"https://secure.gravatar.com/avatar/b8522f0e74e1673596e2c15dca95c04a?s=218\u0026d=mm","url":"https://deploygate.com/users/naoto-fukuda-test"},{"type":"User","name":"naoto-fukuda","icon_url":"https://secure.gravatar.com/avatar/77329ff2f492bb519f6f11a7bd27d568?s=218\u0026d=mm","url":"https://deploygate.com/users/naoto-fukuda"}]}'
+    headers: {}
+    status: 200 OK
+    code: 200
+    duration: ""
